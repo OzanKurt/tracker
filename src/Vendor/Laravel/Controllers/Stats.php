@@ -26,15 +26,15 @@ class Stats extends Controller
     public function index(Session $session)
     {
         if (!$this->isAuthenticated()) {
-            return View::make('pragmarx/tracker::message')->with('message', trans('tracker::tracker.auth_required'));
+            return View::make('kurt/tracker::message')->with('message', trans('tracker::tracker.auth_required'));
         }
 
         if (!$this->hasAdminProperty()) {
-            return View::make('pragmarx/tracker::message')->with('message', trans('tracker::tracker.miss_admin_prop'));
+            return View::make('kurt/tracker::message')->with('message', trans('tracker::tracker.miss_admin_prop'));
         }
 
         if (!$this->isAdmin()) {
-            return View::make('pragmarx/tracker::message')->with('message', trans('tracker::tracker.not_admin'));
+            return View::make('kurt/tracker::message')->with('message', trans('tracker::tracker.not_admin'));
         }
 
         return $this->showPage($session, $session->getValue('page'));
@@ -71,7 +71,7 @@ class Stats extends Controller
             ',
         ];
 
-        return View::make('pragmarx/tracker::index')
+        return View::make('kurt/tracker::index')
             ->with('sessions', Tracker::sessions($session->getMinutes()))
             ->with('title', ''.trans('tracker::tracker.visits').'')
             ->with('username_column', Tracker::getConfig('authenticated_user_username_column'))
@@ -80,14 +80,14 @@ class Stats extends Controller
 
     public function log($uuid)
     {
-        return View::make('pragmarx/tracker::log')
+        return View::make('kurt/tracker::log')
                 ->with('uuid', $uuid)
                 ->with('title', 'log');
     }
 
     public function summary()
     {
-        return View::make('pragmarx/tracker::summary')
+        return View::make('kurt/tracker::summary')
                 ->with('title', ''.trans('tracker::tracker.page_views_summary').'');
     }
 
@@ -178,7 +178,7 @@ class Stats extends Controller
 
     public function users(Session $session)
     {
-        return View::make('pragmarx/tracker::users')
+        return View::make('kurt/tracker::users')
             ->with('users', Tracker::users($session->getMinutes()))
             ->with('title', ''.trans('tracker::tracker.users').'')
             ->with('username_column', Tracker::getConfig('authenticated_user_username_column'));
@@ -186,14 +186,14 @@ class Stats extends Controller
 
     private function events(Session $session)
     {
-        return View::make('pragmarx/tracker::events')
+        return View::make('kurt/tracker::events')
             ->with('events', Tracker::events($session->getMinutes()))
             ->with('title', ''.trans('tracker::tracker.events').'');
     }
 
     public function errors(Session $session)
     {
-        return View::make('pragmarx/tracker::errors')
+        return View::make('kurt/tracker::errors')
             ->with('error_log', Tracker::errors($session->getMinutes()))
             ->with('title', ''.trans('tracker::tracker.errors').'');
     }

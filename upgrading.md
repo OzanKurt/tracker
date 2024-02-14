@@ -61,7 +61,7 @@ ALTER TABLE "tracker_route_paths" ALTER COLUMN route_id TYPE BIGINT
 ALTER TABLE tracker_route_paths CHANGE route_id route_id bigint unsigned NULL;
 ```
 
-#### Add the following keys to your `app/config/packages/pragmarx/tracker/config.php`:
+#### Add the following keys to your `app/config/packages/kurt/tracker/config.php`:
 
 ```
 'log_exceptions' => true,
@@ -82,7 +82,7 @@ wget --output-document=/tmp/sba2.zip http://startbootstrap.com/downloads/sb-admi
 unzip /tmp/sba2.zip -d public/templates/
 ```
 
-#### Add the following keys to your `app/config/packages/pragmarx/tracker/config.php`:
+#### Add the following keys to your `app/config/packages/kurt/tracker/config.php`:
 
 ```
 /**
@@ -115,7 +115,7 @@ unzip /tmp/sba2.zip -d public/templates/
 /**
  * Stats Panel layout view
  */
-'stats_layout' => 'pragmarx/tracker::layout',
+'stats_layout' => 'kurt/tracker::layout',
 
 /**
  * Stats Panel controllers namespace
@@ -131,7 +131,7 @@ unzip /tmp/sba2.zip -d public/templates/
 
 ## to 0.4.0
 
-#### Add the following keys to your `app/config/packages/pragmarx/tracker/config.php`:
+#### Add the following keys to your `app/config/packages/kurt/tracker/config.php`:
 
 ```
 'log_geoip' => true,

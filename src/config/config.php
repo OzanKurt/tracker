@@ -365,7 +365,7 @@ return [
     /*
      * Stats Panel layout view
      */
-    'stats_layout' => 'pragmarx/tracker::layout',
+    'stats_layout' => 'kurt/tracker::layout',
 
     /*
      * Stats Panel controllers namespace

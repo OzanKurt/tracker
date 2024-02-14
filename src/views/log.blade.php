@@ -6,7 +6,7 @@
 
 @section('inline-javascript')
     @include(
-        'pragmarx/tracker::_datatables',
+        'kurt/tracker::_datatables',
         array(
             'datatables_ajax_route' => route('tracker.stats.api.log', array('uuid' => $uuid)),
             'datatables_columns' =>

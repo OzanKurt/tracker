@@ -45,7 +45,7 @@ use Kurt\Tracker\Vendor\Laravel\Artisan\UpdateGeoIp;
 
 class ServiceProvider extends KurtServiceProvider
 {
-    protected $packageVendor = 'pragmarx';
+    protected $packageVendor = 'kurt';
 
     protected $packageName = 'tracker';
 
@@ -562,7 +562,7 @@ class ServiceProvider extends KurtServiceProvider
     {
         $me = $this;
 
-        $this->app->make('view')->composer('pragmarx/tracker::*', function ($view) use ($me) {
+        $this->app->make('view')->composer('kurt/tracker::*', function ($view) use ($me) {
             $view->with('stats_layout', $me->getConfig('stats_layout'));
 
             $template_path = url('/').$me->getConfig('stats_template_path');
