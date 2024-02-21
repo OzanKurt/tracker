@@ -120,7 +120,7 @@ unzip /tmp/sba2.zip -d public/templates/
 /**
  * Stats Panel controllers namespace
  */
-'stats_controllers_namespace' => 'Kurt\Tracker\Vendor\Laravel\Controllers',
+'stats_controllers_namespace' => 'Kurt\Tracker\Controllers',
 ```
 
 #### The Stats Panel must be enabled in your config file

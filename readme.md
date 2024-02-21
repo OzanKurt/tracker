@@ -290,7 +290,7 @@ All tables are prefixed by `tracker_`, and here's an extract of some of them, sh
 | 3  | 500  | Trying to get property of non-object (View: /home/forge/stage.antoniocarlosribeiro.com/app/views/admin/tracker/log.blade.php)                                                                                                |
 | 4  | 500  | syntax error, unexpected 'foreach' (T_FOREACH)                                                                                                                                                                               |
 | 5  | 500  | Call to undefined method Kurt\Tracker\Tracker::pageViewsByCountry()                                                                                                                                                      |
-| 6  | 500  | Class Kurt\Firewall\Vendor\Laravel\Artisan\Base contains 1 abstract method and must therefore be declared abstract or implement the remaining methods (Illuminate\Console\Command::fire)                                 |
+| 6  | 500  | Class Kurt\Firewall\Artisan\Base contains 1 abstract method and must therefore be declared abstract or implement the remaining methods (Illuminate\Console\Command::fire)                                 |
 | 7  | 405  |                                                                                                                                                                                                                              |
 | 8  | 500  | Trying to get property of non-object                                                                                                                                                                                         |
 | 9  | 500  | Missing argument 2 for Illuminate\Database\Eloquent\Model::setAttribute(), called in /home/forge/stage.antoniocarlosribeiro.com/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php on line 2444 and defined |
@@ -502,13 +502,13 @@ For Laravel 4+ please use version 2.0.10.
 #### Add the service provider to your app/config/app.php:
 
 ```php
- Kurt\Tracker\Vendor\Laravel\ServiceProvider::class,
+ Kurt\Tracker\ServiceProvider::class,
 ```
 
 #### Add the alias to the facade on your app/config/app.php:
 
 ```php
-'Tracker' => 'Kurt\Tracker\Vendor\Laravel\Facade',
+'Tracker' => 'Kurt\Tracker\Facade',
 ```
 
 #### Publish tracker configuration:
@@ -519,7 +519,7 @@ For Laravel 4+ please use version 2.0.10.
 
 **Laravel 5**
 
-    php artisan vendor:publish --provider="Kurt\Tracker\Vendor\Laravel\ServiceProvider"
+    php artisan vendor:publish --provider="Kurt\Tracker\ServiceProvider"
 
 #### Enable the Middleware (Laravel 5)
 
@@ -534,7 +534,7 @@ Open the newly published config file found at `app/config/tracker.php` and enabl
 Open the file `app/Http/Kernel.php` and add the following to your web middlewares:
 
 ```php
-\Kurt\Tracker\Vendor\Laravel\Middlewares\Tracker::class,
+\Kurt\Tracker\Middlewares\Tracker::class,
 ```
 
 #### Enable Tracker in your config.php (Laravel 4) or tracker.php (Laravel 5)
@@ -693,7 +693,7 @@ If you get an error like:
 
 You probably need to change: 
 
-    'user_model' => 'Kurt\Tracker\Vendor\Laravel\Models\User',
+    'user_model' => 'Kurt\Tracker\Models\User',
 
 To create (or use a current) a User model:
 
@@ -710,12 +710,12 @@ In your kernel
     protected $middlewareGroups = [
         'web' => [
             .......
-            \Kurt\Tracker\Vendor\Laravel\Middlewares\Tracker::class,
+            \Kurt\Tracker\Middlewares\Tracker::class,
         ],
 
         'api' => [
            .......
-            \Kurt\Tracker\Vendor\Laravel\Middlewares\Tracker::class,
+            \Kurt\Tracker\Middlewares\Tracker::class,
         ],
     ];
 

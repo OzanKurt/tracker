@@ -15,20 +15,6 @@ use Psr\Log\LoggerInterface;
 
 class Tracker
 {
-    protected $config;
-
-    /**
-     * @var \Illuminate\Routing\Router
-     */
-    protected $route;
-
-    protected $logger;
-
-    /**
-     * @var \Illuminate\Foundation\Application
-     */
-    protected $laravel;
-
     protected $enabled = true;
 
     protected $sessionData;
@@ -37,33 +23,7 @@ class Tracker
 
     protected $booted = false;
 
-    /**
-     * @var MessageRepository
-     */
-    protected $messageRepository;
-
-    public function __construct(
-        Config $config,
-        DataRepositoryManager $dataRepositoryManager,
-        Request $request,
-        Router $route,
-        LoggerInterface $logger,
-        Laravel $laravel,
-        MessageRepository $messageRepository
-    ) {
-        $this->config = $config;
-
-        $this->dataRepositoryManager = $dataRepositoryManager;
-
-        $this->request = $request;
-
-        $this->route = $route;
-
-        $this->logger = $logger;
-
-        $this->laravel = $laravel;
-
-        $this->messageRepository = $messageRepository;
+    public function __construct() {
     }
 
     public function allSessions()
@@ -117,26 +77,26 @@ class Tracker
 
     public function getAgentId()
     {
-        return $this->config->get('log_user_agents')
+        return config('tracker.log_user_agents')
             ? $this->dataRepositoryManager->getAgentId()
             : null;
     }
 
     public function getConfig($key)
     {
-        return $this->config->get($key);
+        return config($tracker.key);
     }
 
     public function getCookieId()
     {
-        return $this->config->get('store_cookie_tracker')
+        return config('tracker.store_cookie_tracker')
             ? $this->dataRepositoryManager->getCookieId()
             : null;
     }
 
     public function getDeviceId()
     {
-        return $this->config->get('log_devices')
+        return config('tracker.log_devices')
             ? $this->dataRepositoryManager->findOrCreateDevice(
                 $this->dataRepositoryManager->getCurrentDeviceProperties()
             )
@@ -145,7 +105,7 @@ class Tracker
 
     public function getLanguageId()
     {
-        return $this->config->get('log_languages')
+        return config('tracker.log_languages')
             ? $this->dataRepositoryManager->findOrCreateLanguage($this->dataRepositoryManager->getCurrentLanguage())
             : null;
     }
@@ -157,7 +117,7 @@ class Tracker
 
     public function getGeoIpId()
     {
-        return $this->config->get('log_geoip')
+        return config('tracker.log_geoip')
             ? $this->dataRepositoryManager->getGeoIpId($this->request->getClientIp())
             : null;
     }
@@ -187,7 +147,7 @@ class Tracker
 
     public function getPathId()
     {
-        return $this->config->get('log_paths')
+        return config('tracker.log_paths')
             ? $this->dataRepositoryManager->findOrCreatePath(
                 [
                     'path' => $this->request->path(),
@@ -198,7 +158,7 @@ class Tracker
 
     public function getQueryId()
     {
-        if ($this->config->get('log_queries')) {
+        if (config('tracker.log_queries')) {
             if (count($arguments = $this->request->query())) {
                 return $this->dataRepositoryManager->getQueryId(
                     [
@@ -212,7 +172,7 @@ class Tracker
 
     public function getRefererId()
     {
-        return $this->config->get('log_referers')
+        return config('tracker.log_referers')
             ? $this->dataRepositoryManager->getRefererId(
                 $this->request->headers->get('referer')
             )
@@ -226,7 +186,7 @@ class Tracker
 
     protected function logUntrackable($item)
     {
-        if ($this->config->get('log_untrackable_sessions') && !isset($this->loggedItems[$item])) {
+        if (config('tracker.log_untrackable_sessions') && !isset($this->loggedItems[$item])) {
             $this->getLogger()->warning('TRACKER (unable to track item): '.$item);
 
             $this->loggedItems[$item] = $item;
@@ -268,7 +228,7 @@ class Tracker
 
     public function getUserId()
     {
-        return $this->config->get('log_users')
+        return config('tracker.log_users')
             ? $this->dataRepositoryManager->getCurrentUserId()
             : null;
     }
@@ -278,7 +238,7 @@ class Tracker
      */
     public function handleThrowable($throwable)
     {
-        if ($this->config->get('log_enabled')) {
+        if (config('tracker.log_enabled')) {
             $this->dataRepositoryManager->handleThrowable($throwable);
         }
     }
@@ -297,13 +257,13 @@ class Tracker
     {
         return !in_array(
             $name,
-            $this->config->get('do_not_log_sql_queries_connections')
+            config('tracker.do_not_log_sql_queries_connections')
         );
     }
 
     public function isTrackable()
     {
-        return $this->config->get('enabled') &&
+        return config('tracker.enabled') &&
                 $this->logIsEnabled() &&
                 $this->allowConsole() &&
                 $this->parserIsAvailable() &&
@@ -318,7 +278,7 @@ class Tracker
     {
         $trackable = !in_array(
             $this->laravel->environment(),
-            $this->config->get('do_not_track_environments')
+            config('tracker.do_not_track_environments')
         );
 
         if (!$trackable) {
@@ -332,7 +292,7 @@ class Tracker
     {
         $trackable = !IpAddress::ipv4InRange(
             $ipAddress = $this->request->getClientIp(),
-            $this->config->get('do_not_track_ips')
+            config('tracker.do_not_track_ips')
         );
 
         if (!$trackable) {
@@ -355,8 +315,8 @@ class Tracker
     {
         if (
             $this->isTrackable() &&
-            $this->config->get('log_enabled') &&
-            $this->config->get('log_events')
+            config('tracker.log_enabled') &&
+            config('tracker.log_events')
         ) {
             $this->dataRepositoryManager->logEvents();
         }
@@ -365,20 +325,20 @@ class Tracker
     public function logIsEnabled()
     {
         $enabled =
-            $this->config->get('log_enabled') ||
-            $this->config->get('log_sql_queries') ||
-            $this->config->get('log_sql_queries_bindings') ||
-            $this->config->get('log_events') ||
-            $this->config->get('log_geoip') ||
-            $this->config->get('log_user_agents') ||
-            $this->config->get('log_users') ||
-            $this->config->get('log_devices') ||
-            $this->config->get('log_languages') ||
-            $this->config->get('log_referers') ||
-            $this->config->get('log_paths') ||
-            $this->config->get('log_queries') ||
-            $this->config->get('log_routes') ||
-            $this->config->get('log_exceptions');
+            config('tracker.log_enabled') ||
+            config('tracker.log_sql_queries') ||
+            config('tracker.log_sql_queries_bindings') ||
+            config('tracker.log_events') ||
+            config('tracker.log_geoip') ||
+            config('tracker.log_user_agents') ||
+            config('tracker.log_users') ||
+            config('tracker.log_devices') ||
+            config('tracker.log_languages') ||
+            config('tracker.log_referers') ||
+            config('tracker.log_paths') ||
+            config('tracker.log_queries') ||
+            config('tracker.log_routes') ||
+            config('tracker.log_exceptions');
 
         if (!$enabled) {
             $this->logUntrackable('there are no log items enabled.');
@@ -391,8 +351,8 @@ class Tracker
     {
         if (
             $this->isTrackable() &&
-            $this->config->get('log_enabled') &&
-            $this->config->get('log_sql_queries') &&
+            config('tracker.log_enabled') &&
+            config('tracker.log_sql_queries') &&
             $this->isSqlQueriesLoggableConnection($name)
         ) {
             $this->dataRepositoryManager->logSqlQuery($query, $bindings, $time, $name);
@@ -403,7 +363,7 @@ class Tracker
     {
         $trackable =
             !$this->isRobot() ||
-            !$this->config->get('do_not_track_robots');
+            !config('tracker.do_not_track_robots');
 
         if (!$trackable) {
             $this->logUntrackable('tracking of robots is disabled.');
@@ -424,9 +384,8 @@ class Tracker
 
     public function allowConsole()
     {
-        return
-            (!$this->laravel->runningInConsole()) ||
-            $this->config->get('console_log_enabled', false);
+        return (!$this->laravel->runningInConsole()) ||
+            config('tracker.console_log_enabled', false);
     }
 
     public function parserIsAvailable()
@@ -502,7 +461,7 @@ class Tracker
     {
         $log = $this->getLogData();
 
-        if ($this->config->get('log_enabled')) {
+        if (config('tracker.log_enabled')) {
             $this->dataRepositoryManager->createLog($log);
         }
     }
@@ -555,7 +514,7 @@ class Tracker
     {
         $updater = new GeoIpUpdater();
 
-        $success = $updater->updateGeoIpFiles($this->config->get('geoip_database_path'));
+        $success = $updater->updateGeoIpFiles(config('tracker.geoip_database_path'));
 
         $this->messageRepository->addMessage($updater->getMessages());
 

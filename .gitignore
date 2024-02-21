@@ -1,5 +1,4 @@
-/vendor
-composer.phar
-.DS_Store
-.idea
 .idea/
+vendor/
+.DS_Store
+composer.lock

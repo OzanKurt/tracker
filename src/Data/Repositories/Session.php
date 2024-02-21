@@ -3,8 +3,6 @@
 namespace Kurt\Tracker\Data\Repositories;
 
 use Carbon\Carbon;
-use Kurt\Support\Config;
-use Kurt\Support\PhpSession;
 use Ramsey\Uuid\Uuid as UUID;
 
 class Session extends Repository
@@ -17,18 +15,14 @@ class Session extends Repository
 
     protected $relations = ['device', 'user', 'log', 'language', 'agent', 'referer', 'geoIp', 'cookie'];
 
-    public function __construct($model, Config $config, PhpSession $session)
+    public function __construct($model)
     {
-        $this->config = $config;
-
-        $this->session = $session;
-
         parent::__construct($model);
     }
 
     public function findByUuid($uuid)
     {
-        list($model, $cacheKey) = $this->cache->findCached($uuid, 'uuid', 'Kurt\Tracker\Vendor\Laravel\Models\Session');
+        list($model, $cacheKey) = $this->cache->findCached($uuid, 'uuid', 'Kurt\Tracker\Models\Session');
 
         if (!$model) {
             $model = $this->newQuery()->where('uuid', $uuid)->with($this->relations)->first();
