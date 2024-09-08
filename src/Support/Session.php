@@ -3,7 +3,7 @@
 namespace OzanKurt\Tracker\Support;
 
 use Illuminate\Support\Facades\Request;
-use Kurt\Tracker\Support\Minutes;
+use OzanKurt\Tracker\Support\Minutes;
 use Session as LaravelSession;
 
 class Session

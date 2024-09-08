@@ -2,7 +2,7 @@
 
 namespace OzanKurt\Tracker\Data\Repositories;
 
-use Kurt\Support\Config;
+use OzanKurt\Support\Config;
 
 class Route extends Repository
 {

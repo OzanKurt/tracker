@@ -2,8 +2,8 @@
 
 namespace OzanKurt\Tracker\Data\Repositories;
 
-use Kurt\Support\Config;
-use Kurt\Tracker\Eventing\EventStorage;
+use OzanKurt\Support\Config;
+use OzanKurt\Tracker\Eventing\EventStorage;
 
 class Event extends Repository
 {

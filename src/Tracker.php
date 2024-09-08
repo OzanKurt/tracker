@@ -6,13 +6,13 @@ use Illuminate\Foundation\Application as Laravel;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
-use Kurt\Support\Config;
-use Kurt\Support\GeoIp\Updater as GeoIpUpdater;
-use Kurt\Support\Support\IpAddress;
-use Kurt\Tracker\Data\RepositoryManager as DataRepositoryManager;
-use Kurt\Tracker\Repositories\Message as MessageRepository;
-use Kurt\Tracker\Support\CrawlerDetector;
-use Kurt\Tracker\Support\Minutes;
+use OzanKurt\Support\Config;
+use OzanKurt\Support\GeoIp\Updater as GeoIpUpdater;
+use OzanKurt\Support\Support\IpAddress;
+use OzanKurt\Tracker\Data\RepositoryManager as DataRepositoryManager;
+use OzanKurt\Tracker\Repositories\Message as MessageRepository;
+use OzanKurt\Tracker\Support\CrawlerDetector;
+use OzanKurt\Tracker\Support\Minutes;
 use Psr\Log\LoggerInterface;
 
 class Tracker
@@ -26,7 +26,6 @@ class Tracker
     protected $booted = false;
 
     public function __construct() {
-        $this->dataRepositoryManager = app(DataRepositoryManager::class);
     }
 
     public function allSessions()

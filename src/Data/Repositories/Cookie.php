@@ -4,7 +4,7 @@ namespace OzanKurt\Tracker\Data\Repositories;
 
 use Illuminate\Cookie\CookieJar;
 use Illuminate\Http\Request;
-use Kurt\Support\Config;
+use OzanKurt\Support\Config;
 use Ramsey\Uuid\Uuid as UUID;
 
 class Cookie extends Repository

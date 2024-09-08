@@ -2,7 +2,7 @@
 
 namespace OzanKurt\Tracker\Data\Repositories;
 
-use Kurt\Tracker\Support\RefererParser;
+use OzanKurt\Tracker\Support\RefererParser;
 
 class Referer extends Repository
 {

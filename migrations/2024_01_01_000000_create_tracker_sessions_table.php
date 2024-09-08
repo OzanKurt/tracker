@@ -1,6 +1,6 @@
 <?php
 
-use Kurt\Tracker\Support\Migration;
+use OzanKurt\Tracker\Support\Migration;
 
 class CreateTrackerSessionsTable extends Migration
 {

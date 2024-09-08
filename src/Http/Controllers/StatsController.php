@@ -6,8 +6,8 @@ use Bllim\Datatables\Facade\Datatables;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
-use Kurt\Tracker\Facade as Tracker;
-use Kurt\Tracker\Support\Session;
+use OzanKurt\Tracker\Facade as Tracker;
+use OzanKurt\Tracker\Support\Session;
 
 class StatsController extends Controller
 {

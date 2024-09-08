@@ -3,7 +3,7 @@
 namespace OzanKurt\Tracker\Support\Exceptions;
 
 use Illuminate\Contracts\Debug\ExceptionHandler;
-use Kurt\Tracker\Tracker;
+use OzanKurt\Tracker\Tracker;
 use Throwable;
 
 class Handler implements ExceptionHandler

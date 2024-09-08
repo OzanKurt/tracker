@@ -4,13 +4,13 @@ namespace OzanKurt\Tracker;
 
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
-use Kurt\Tracker\Artisan\Tables as TablesCommand;
-use Kurt\Tracker\Artisan\UpdateGeoIp;
-use Kurt\Tracker\Data\Repositories\Event;
-use Kurt\Tracker\Data\Repositories\Log;
-use Kurt\Tracker\Eventing\EventStorage;
-use Kurt\Tracker\Repositories\Message as MessageRepository;
-use Kurt\Tracker\Support\Exceptions\Handler as TrackerExceptionHandler;
+use OzanKurt\Tracker\Artisan\Tables as TablesCommand;
+use OzanKurt\Tracker\Artisan\UpdateGeoIp;
+use OzanKurt\Tracker\Data\Repositories\Event;
+use OzanKurt\Tracker\Data\Repositories\Log;
+use OzanKurt\Tracker\Eventing\EventStorage;
+use OzanKurt\Tracker\Repositories\Message as MessageRepository;
+use OzanKurt\Tracker\Support\Exceptions\Handler as TrackerExceptionHandler;
 
 class TrackerServiceProvider extends ServiceProvider implements DeferrableProvider
 {

@@ -1,31 +1,31 @@
 <?php
 
-use Kurt\Tracker\Models\Agent;
-use Kurt\Tracker\Models\Connection;
-use Kurt\Tracker\Models\Cookie;
-use Kurt\Tracker\Models\Device;
-use Kurt\Tracker\Models\Domain;
-use Kurt\Tracker\Models\Error;
-use Kurt\Tracker\Models\Event;
-use Kurt\Tracker\Models\EventLog;
-use Kurt\Tracker\Models\GeoIp;
-use Kurt\Tracker\Models\Language;
-use Kurt\Tracker\Models\Log;
-use Kurt\Tracker\Models\Path;
-use Kurt\Tracker\Models\Query;
-use Kurt\Tracker\Models\QueryArgument;
-use Kurt\Tracker\Models\Referer;
-use Kurt\Tracker\Models\RefererSearchTerm;
-use Kurt\Tracker\Models\Route;
-use Kurt\Tracker\Models\RoutePath;
-use Kurt\Tracker\Models\RoutePathParameter;
-use Kurt\Tracker\Models\Session;
-use Kurt\Tracker\Models\SqlQuery;
-use Kurt\Tracker\Models\SqlQueryBinding;
-use Kurt\Tracker\Models\SqlQueryBindingParameter;
-use Kurt\Tracker\Models\SqlQueryLog;
-use Kurt\Tracker\Models\SystemClass;
-use Kurt\Tracker\Models\User;
+use OzanKurt\Tracker\Models\Agent;
+use OzanKurt\Tracker\Models\Connection;
+use OzanKurt\Tracker\Models\Cookie;
+use OzanKurt\Tracker\Models\Device;
+use OzanKurt\Tracker\Models\Domain;
+use OzanKurt\Tracker\Models\Error;
+use OzanKurt\Tracker\Models\Event;
+use OzanKurt\Tracker\Models\EventLog;
+use OzanKurt\Tracker\Models\GeoIp;
+use OzanKurt\Tracker\Models\Language;
+use OzanKurt\Tracker\Models\Log;
+use OzanKurt\Tracker\Models\Path;
+use OzanKurt\Tracker\Models\Query;
+use OzanKurt\Tracker\Models\QueryArgument;
+use OzanKurt\Tracker\Models\Referer;
+use OzanKurt\Tracker\Models\RefererSearchTerm;
+use OzanKurt\Tracker\Models\Route;
+use OzanKurt\Tracker\Models\RoutePath;
+use OzanKurt\Tracker\Models\RoutePathParameter;
+use OzanKurt\Tracker\Models\Session;
+use OzanKurt\Tracker\Models\SqlQuery;
+use OzanKurt\Tracker\Models\SqlQueryBinding;
+use OzanKurt\Tracker\Models\SqlQueryBindingParameter;
+use OzanKurt\Tracker\Models\SqlQueryLog;
+use OzanKurt\Tracker\Models\SystemClass;
+use OzanKurt\Tracker\Models\User;
 
 return [
 

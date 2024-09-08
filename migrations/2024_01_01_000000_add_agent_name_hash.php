@@ -1,7 +1,7 @@
 <?php
 
-use Kurt\Tracker\Support\Migration;
-use Kurt\Tracker\Models\Agent;
+use OzanKurt\Tracker\Support\Migration;
+use OzanKurt\Tracker\Models\Agent;
 
 class AddAgentNameHash extends Migration
 {
