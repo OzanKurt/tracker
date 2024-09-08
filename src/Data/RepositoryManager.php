@@ -358,17 +358,6 @@ class RepositoryManager implements RepositoryManagerInterface
         ];
     }
 
-    public function getCurrentDeviceProperties()
-    {
-        if ($properties = $this->getDevice()) {
-            $properties['platform'] = $this->getOperatingSystemFamily();
-
-            $properties['platform_version'] = $this->getOperatingSystemVersion();
-        }
-
-        return $properties;
-    }
-
     public function getCurrentUserAgent()
     {
         return $this->userAgentParser->originalUserAgent;
@@ -377,18 +366,6 @@ class RepositoryManager implements RepositoryManagerInterface
     public function getCurrentUserId()
     {
         return $this->authentication->getCurrentUserId();
-    }
-
-    /**
-     * @return array
-     */
-    private function getDevice()
-    {
-        try {
-            return $this->mobileDetect->detectDevice();
-        } catch (\Exception $e) {
-            return;
-        }
     }
 
     private function getLanguage()

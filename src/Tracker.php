@@ -13,6 +13,8 @@ use OzanKurt\Tracker\Data\RepositoryManager as DataRepositoryManager;
 use OzanKurt\Tracker\Repositories\Message as MessageRepository;
 use OzanKurt\Tracker\Support\CrawlerDetector;
 use OzanKurt\Tracker\Support\Minutes;
+use OzanKurt\Tracker\Support\MobileDetect;
+use OzanKurt\Tracker\Support\UserAgentParser;
 use Psr\Log\LoggerInterface;
 
 class Tracker
@@ -98,11 +100,179 @@ class Tracker
 
     public function getDeviceId()
     {
+        $currentDeviceProperties = $this->getCurrentDeviceProperties();
+
         return config('tracker.log_devices')
-            ? $this->dataRepositoryManager->findOrCreateDevice(
-                $this->dataRepositoryManager->getCurrentDeviceProperties()
+            ? $this->findOrCreate(
+                $currentDeviceProperties,
+                ['kind', 'model', 'platform', 'platform_version']
             )
             : null;
+    }
+
+    private function extractAttributes($attributes)
+    {
+        if (is_array($attributes) || is_string($attributes)) {
+            return $attributes;
+        }
+
+        if (is_string($attributes) || is_numeric($attributes)) {
+            return (array) $attributes;
+        }
+
+        if ($attributes instanceof Model) {
+            return $attributes->getAttributes();
+        }
+    }
+
+    /**
+     * @param $attributes
+     * @param $keys
+     *
+     * @return array
+     */
+    private function extractKeys($attributes, $keys)
+    {
+        if (!$keys) {
+            $keys = array_keys($attributes);
+        }
+
+        if (!is_array($keys)) {
+            $keys = (array) $keys;
+
+            return $keys;
+        }
+
+        return $keys;
+    }
+
+    public function makeCacheKey($attributes, $keys, $identifier)
+    {
+        $attributes = $this->extractAttributes($attributes);
+
+        $cacheKey = "className=$identifier;";
+
+        $keys = $this->extractKeys($attributes, $keys, $identifier);
+
+        foreach ($keys as $key) {
+            if (isset($attributes[$key])) {
+                $cacheKey .= "$key=$attributes[$key];";
+            }
+        }
+
+        return sha1($cacheKey);
+    }
+
+    /**
+     * @param string $identifier
+     */
+    public function findCached($attributes, $keys, $identifier = null)
+    {
+        if (!config('tracker.cache_enabled')) {
+            return;
+        }
+
+        $key = $this->makeCacheKey($attributes, $keys, $identifier);
+
+        return [
+            $this->findCachedWithKey($key),
+            $key,
+        ];
+    }
+
+    /**
+     * @param string $key
+     *
+     * @return array
+     */
+    public function findCachedWithKey($key)
+    {
+        if (config('tracher.cache_enabled')) {
+            return cache()->get($key);
+        }
+    }
+
+    /**
+     * @param string[] $keys
+     */
+    public function findOrCreate($attributes, $keys = null, &$created = false, $otherModel = null)
+    {
+        list($model, $cacheKey) = $this->findCached($attributes, $keys, 'Device');
+
+        dd($model, $cacheKey);
+
+        if (!$model) {
+            $model = $this->newQuery($otherModel);
+
+            $keys = $keys ?: array_keys($attributes);
+
+            foreach ($keys as $key) {
+                $model = $model->where($key, $attributes[$key]);
+            }
+
+            if (!$model = $model->first()) {
+                $model = $this->create($attributes, $otherModel);
+
+                $created = true;
+            }
+
+            $this->cache->cachePut($cacheKey, $model);
+        }
+
+        $this->model = $model;
+
+        return $model->id;
+    }
+
+    /**
+     * @return array
+     */
+    private function getDevice()
+    {
+        try {
+            $mobileDetect = new MobileDetect();
+            return $mobileDetect->detectDevice();
+        } catch (\Exception $e) {
+            dd($e);
+            return;
+        }
+    }
+
+    public function getCurrentDeviceProperties()
+    {
+        if ($properties = $this->getDevice()) {
+            $properties['platform'] = $this->getOperatingSystemFamily();
+
+            $properties['platform_version'] = $this->getOperatingSystemVersion();
+        }
+
+        return $properties;
+    }
+
+    /**
+     * @return mixed
+     */
+    private function getOperatingSystemFamily()
+    {
+        try {
+            $userAgentParser = new UserAgentParser(base_path());
+            return $userAgentParser->operatingSystem->family;
+        } catch (\Exception $e) {
+            return;
+        }
+    }
+
+    /**
+     * @return mixed
+     */
+    private function getOperatingSystemVersion()
+    {
+        try {
+            $userAgentParser = new UserAgentParser(base_path());
+            return $userAgentParser->getOperatingSystemVersion();
+        } catch (\Exception $e) {
+            return;
+        }
     }
 
     public function getLanguageId()
