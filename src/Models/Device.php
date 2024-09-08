@@ -1,6 +1,6 @@
 <?php
 
-namespace Kurt\Tracker\Models;
+namespace OzanKurt\Tracker\Models;
 
 class Device extends Base
 {

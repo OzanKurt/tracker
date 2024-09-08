@@ -1,6 +1,6 @@
 <?php
 
-namespace Kurt\Tracker\Data\Repositories;
+namespace OzanKurt\Tracker\Data\Repositories;
 
 use Kurt\Support\Config;
 use Kurt\Tracker\Eventing\EventStorage;

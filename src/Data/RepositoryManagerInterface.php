@@ -1,6 +1,6 @@
 <?php
 
-namespace Kurt\Tracker\Data;
+namespace OzanKurt\Tracker\Data;
 
 interface RepositoryManagerInterface
 {

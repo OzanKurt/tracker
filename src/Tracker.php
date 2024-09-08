@@ -1,15 +1,17 @@
 <?php
 
-namespace Kurt\Tracker;
+namespace OzanKurt\Tracker;
 
 use Illuminate\Foundation\Application as Laravel;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\Route;
 use Kurt\Support\Config;
 use Kurt\Support\GeoIp\Updater as GeoIpUpdater;
-use Kurt\Support\IpAddress;
+use Kurt\Support\Support\IpAddress;
 use Kurt\Tracker\Data\RepositoryManager as DataRepositoryManager;
 use Kurt\Tracker\Repositories\Message as MessageRepository;
+use Kurt\Tracker\Support\CrawlerDetector;
 use Kurt\Tracker\Support\Minutes;
 use Psr\Log\LoggerInterface;
 
@@ -24,6 +26,7 @@ class Tracker
     protected $booted = false;
 
     public function __construct() {
+        $this->dataRepositoryManager = app(DataRepositoryManager::class);
     }
 
     public function allSessions()
@@ -118,7 +121,7 @@ class Tracker
     public function getGeoIpId()
     {
         return config('tracker.log_geoip')
-            ? $this->dataRepositoryManager->getGeoIpId($this->request->getClientIp())
+            ? $this->dataRepositoryManager->getGeoIpId(request()->getClientIp())
             : null;
     }
 
@@ -129,20 +132,20 @@ class Tracker
     {
         return [
             'session_id' => $this->getSessionId(true),
-            'method'     => $this->request->method(),
+            'method'     => request()->method(),
             'path_id'    => $this->getPathId(),
             'query_id'   => $this->getQueryId(),
             'referer_id' => $this->getRefererId(),
-            'is_ajax'    => $this->request->ajax(),
-            'is_secure'  => $this->request->isSecure(),
-            'is_json'    => $this->request->isJson(),
-            'wants_json' => $this->request->wantsJson(),
+            'is_ajax'    => request()->ajax(),
+            'is_secure'  => request()->isSecure(),
+            'is_json'    => request()->isJson(),
+            'wants_json' => request()->wantsJson(),
         ];
     }
 
     public function getLogger()
     {
-        return $this->logger;
+        return app('log');
     }
 
     public function getPathId()
@@ -150,7 +153,7 @@ class Tracker
         return config('tracker.log_paths')
             ? $this->dataRepositoryManager->findOrCreatePath(
                 [
-                    'path' => $this->request->path(),
+                    'path' => request()->path(),
                 ]
             )
             : null;
@@ -159,7 +162,7 @@ class Tracker
     public function getQueryId()
     {
         if (config('tracker.log_queries')) {
-            if (count($arguments = $this->request->query())) {
+            if (count($arguments = request()->query())) {
                 return $this->dataRepositoryManager->getQueryId(
                     [
                         'query'     => array_implode('=', '|', $arguments),
@@ -174,14 +177,14 @@ class Tracker
     {
         return config('tracker.log_referers')
             ? $this->dataRepositoryManager->getRefererId(
-                $this->request->headers->get('referer')
+                request()->headers->get('referer')
             )
             : null;
     }
 
     public function getRoutePathId()
     {
-        return $this->dataRepositoryManager->getRoutePathId($this->route, $this->request);
+        return $this->dataRepositoryManager->getRoutePathId($this->route, request());
     }
 
     protected function logUntrackable($item)
@@ -201,7 +204,7 @@ class Tracker
         $sessionData = [
             'user_id'      => $this->getUserId(),
             'device_id'    => $this->getDeviceId(),
-            'client_ip'    => $this->request->getClientIp(),
+            'client_ip'    => request()->getClientIp(),
             'geoip_id'     => $this->getGeoIpId(),
             'agent_id'     => $this->getAgentId(),
             'referer_id'   => $this->getRefererId(),
@@ -220,6 +223,9 @@ class Tracker
 
     public function getSessionId($updateLastActivity = false)
     {
+        dd(
+            $this->makeSessionData(),
+            $updateLastActivity);
         return $this->dataRepositoryManager->getSessionId(
             $this->makeSessionData(),
             $updateLastActivity
@@ -229,7 +235,7 @@ class Tracker
     public function getUserId()
     {
         return config('tracker.log_users')
-            ? $this->dataRepositoryManager->getCurrentUserId()
+            ? auth()->id()
             : null;
     }
 
@@ -250,7 +256,9 @@ class Tracker
 
     public function isRobot()
     {
-        return $this->dataRepositoryManager->isRobot();
+        $crawlerDetector = new CrawlerDetector(request()->header(), request()->header('user-agent'));
+
+        return $crawlerDetector->isRobot();
     }
 
     protected function isSqlQueriesLoggableConnection($name)
@@ -263,26 +271,41 @@ class Tracker
 
     public function isTrackable()
     {
-        return config('tracker.enabled') &&
+        $isTrackable = config('tracker.enabled') &&
                 $this->logIsEnabled() &&
                 $this->allowConsole() &&
-                $this->parserIsAvailable() &&
                 $this->isTrackableIp() &&
                 $this->isTrackableEnvironment() &&
                 $this->routeIsTrackable() &&
                 $this->pathIsTrackable() &&
                 $this->notRobotOrTrackable();
+
+        if (!$isTrackable) {
+//            dd(
+//                config('tracker.enabled'),
+//                $this->logIsEnabled(),
+//                $this->allowConsole(),
+//                $this->isTrackableIp(),
+//                $this->isTrackableEnvironment(),
+//                $this->routeIsTrackable(),
+//                $this->pathIsTrackable(),
+//                $this->notRobotOrTrackable()
+//            );
+            return false;
+        }
+
+        return true;
     }
 
     public function isTrackableEnvironment()
     {
         $trackable = !in_array(
-            $this->laravel->environment(),
+            app()->environment(),
             config('tracker.do_not_track_environments')
         );
 
         if (!$trackable) {
-            $this->logUntrackable('environment '.$this->laravel->environment().' is not trackable.');
+            $this->logUntrackable('environment '.app()->environment().' is not trackable.');
         }
 
         return $trackable;
@@ -291,7 +314,7 @@ class Tracker
     public function isTrackableIp()
     {
         $trackable = !IpAddress::ipv4InRange(
-            $ipAddress = $this->request->getClientIp(),
+            $ipAddress = request()->getClientIp(),
             config('tracker.do_not_track_ips')
         );
 
@@ -384,38 +407,24 @@ class Tracker
 
     public function allowConsole()
     {
-        return (!$this->laravel->runningInConsole()) ||
+        return (!app()->runningInConsole()) ||
             config('tracker.console_log_enabled', false);
-    }
-
-    public function parserIsAvailable()
-    {
-        if (!$this->dataRepositoryManager->parserIsAvailable()) {
-            $this->logger->error(trans('tracker::tracker.regex_file_not_available'));
-
-            return false;
-        }
-
-        return true;
     }
 
     public function routeIsTrackable()
     {
-        if (!$this->route) {
+        $route = request()->route();
+
+        if (is_null($route)) {
             return false;
         }
 
-        if (!$trackable = $this->dataRepositoryManager->routeIsTrackable($this->route)) {
-            $this->logUntrackable('route '.$this->route->getCurrentRoute()->getName().' is not trackable.');
-        }
+        $forbidden = config('tracker.do_not_track_routes');
 
-        return $trackable;
-    }
+        $trackable = !$forbidden || !$route->getName() || !in_array_wildcard($route->getName(), $forbidden);
 
-    public function pathIsTrackable()
-    {
-        if (!$trackable = $this->dataRepositoryManager->pathIsTrackable($this->request->path())) {
-            $this->logUntrackable('path '.$this->request->path().' is not trackable.');
+        if (!$trackable) {
+            $this->logUntrackable('route '. $route->getName().' is not trackable.');
         }
 
         return $trackable;
@@ -519,5 +528,19 @@ class Tracker
         $this->messageRepository->addMessage($updater->getMessages());
 
         return $success;
+    }
+
+    public function pathIsTrackable()
+    {
+        $path = request()->path();
+        $forbidden = config('tracker.do_not_track_paths');
+
+        $trackable = !$forbidden || empty($path) || !in_array_wildcard($path, $forbidden);
+
+        if (!$trackable) {
+            $this->logUntrackable('path '.request()->path().' is not trackable.');
+        }
+
+        return $trackable;
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Kurt\Tracker\Vendor\Laravel;
+namespace OzanKurt\Tracker\Vendor\Laravel;
 
 use Illuminate\Support\Facades\Facade as IlluminateFacade;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Kurt\Tracker\Support\Exceptions;
+namespace OzanKurt\Tracker\Support\Exceptions;
 
 class ExceptionFactory
 {

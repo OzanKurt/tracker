@@ -1,6 +1,6 @@
 <?php
 
-namespace Kurt\Tracker\Support;
+namespace OzanKurt\Tracker\Support;
 
 use Illuminate\Filesystem\Filesystem as IlluminateFilesystem;
 

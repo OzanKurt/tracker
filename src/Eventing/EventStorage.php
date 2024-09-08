@@ -1,6 +1,6 @@
 <?php
 
-namespace Kurt\Tracker\Eventing;
+namespace OzanKurt\Tracker\Eventing;
 
 class EventStorage
 {

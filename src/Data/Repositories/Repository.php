@@ -1,6 +1,6 @@
 <?php
 
-namespace Kurt\Tracker\Data\Repositories;
+namespace OzanKurt\Tracker\Data\Repositories;
 
 abstract class Repository implements RepositoryInterface
 {

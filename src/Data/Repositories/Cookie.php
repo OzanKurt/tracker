@@ -1,6 +1,6 @@
 <?php
 
-namespace Kurt\Tracker\Data\Repositories;
+namespace OzanKurt\Tracker\Data\Repositories;
 
 use Illuminate\Cookie\CookieJar;
 use Illuminate\Http\Request;

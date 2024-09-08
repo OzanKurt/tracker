@@ -1,6 +1,6 @@
 <?php
 
-namespace Kurt\Tracker\Controllers;
+namespace OzanKurt\Tracker\Controllers;
 
 use Bllim\Datatables\Facade\Datatables;
 use Illuminate\Routing\Controller;

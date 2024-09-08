@@ -1,6 +1,6 @@
 <?php
 
-namespace Kurt\Tracker\Models;
+namespace OzanKurt\Tracker\Models;
 
 use Illuminate\Database\Eloquent\Model as Eloquent;
 use Symfony\Component\Console\Application;

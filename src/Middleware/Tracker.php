@@ -1,6 +1,6 @@
 <?php
 
-namespace Kurt\Tracker\Middlewares;
+namespace OzanKurt\Tracker\Middleware;
 
 use Closure;
 use Config;

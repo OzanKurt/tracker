@@ -1,6 +1,6 @@
 <?php
 
-namespace Kurt\Tracker\Repositories;
+namespace OzanKurt\Tracker\Repositories;
 
 class Message
 {

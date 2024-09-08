@@ -1,8 +1,8 @@
 <?php
 
-namespace Kurt\Tracker\Support;
+namespace OzanKurt\Tracker\Support;
 
-use Jenssegers\Agent\Agent;
+use OzanKurt\Agent\Agent;
 
 class MobileDetect extends Agent
 {

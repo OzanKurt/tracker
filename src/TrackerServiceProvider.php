@@ -1,47 +1,18 @@
 <?php
 
-namespace Kurt\Tracker;
+namespace OzanKurt\Tracker;
 
-use Kurt\Support\GeoIp\GeoIp;
-use Kurt\Support\PhpSession;
+use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
-use Kurt\Tracker\Data\Repositories\Agent;
-use Kurt\Tracker\Data\Repositories\Connection;
-use Kurt\Tracker\Data\Repositories\Cookie;
-use Kurt\Tracker\Data\Repositories\Device;
-use Kurt\Tracker\Data\Repositories\Domain;
-use Kurt\Tracker\Data\Repositories\Error;
-use Kurt\Tracker\Data\Repositories\Event;
-use Kurt\Tracker\Data\Repositories\EventLog;
-use Kurt\Tracker\Data\Repositories\GeoIp as GeoIpRepository;
-use Kurt\Tracker\Data\Repositories\Language;
-use Kurt\Tracker\Data\Repositories\Log;
-use Kurt\Tracker\Data\Repositories\Path;
-use Kurt\Tracker\Data\Repositories\Query;
-use Kurt\Tracker\Data\Repositories\QueryArgument;
-use Kurt\Tracker\Data\Repositories\Referer;
-use Kurt\Tracker\Data\Repositories\Route;
-use Kurt\Tracker\Data\Repositories\RoutePath;
-use Kurt\Tracker\Data\Repositories\RoutePathParameter;
-use Kurt\Tracker\Data\Repositories\Session;
-use Kurt\Tracker\Data\Repositories\SqlQuery;
-use Kurt\Tracker\Data\Repositories\SqlQueryBinding;
-use Kurt\Tracker\Data\Repositories\SqlQueryBindingParameter;
-use Kurt\Tracker\Data\Repositories\SqlQueryLog;
-use Kurt\Tracker\Data\Repositories\SystemClass;
-use Kurt\Tracker\Data\RepositoryManager;
-use Kurt\Tracker\Eventing\EventStorage;
-use Kurt\Tracker\Repositories\Message as MessageRepository;
-use Kurt\Tracker\Support\CrawlerDetector;
-use Kurt\Tracker\Support\Exceptions\Handler as TrackerExceptionHandler;
-use Kurt\Tracker\Support\LanguageDetect;
-use Kurt\Tracker\Support\MobileDetect;
-use Kurt\Tracker\Support\UserAgentParser;
-use Kurt\Tracker\Tracker;
 use Kurt\Tracker\Artisan\Tables as TablesCommand;
 use Kurt\Tracker\Artisan\UpdateGeoIp;
+use Kurt\Tracker\Data\Repositories\Event;
+use Kurt\Tracker\Data\Repositories\Log;
+use Kurt\Tracker\Eventing\EventStorage;
+use Kurt\Tracker\Repositories\Message as MessageRepository;
+use Kurt\Tracker\Support\Exceptions\Handler as TrackerExceptionHandler;
 
-class TrackerServiceProvider extends ServiceProvider
+class TrackerServiceProvider extends ServiceProvider implements DeferrableProvider
 {
     public function register(): void
     {
@@ -50,7 +21,8 @@ class TrackerServiceProvider extends ServiceProvider
         if (! config('tracker.enabled')) {
             return;
         }
-        //     $this->registerTracker();
+
+        $this->registerTracker();
 
         //     $this->registerTablesCommand();
 
@@ -82,10 +54,6 @@ class TrackerServiceProvider extends ServiceProvider
 
         // $this->registerErrorHandler();
 
-        if (config('tracker.enabled')) {
-            $this->bootTracker();
-        }
-
         // $this->loadTranslations();
     }
 
@@ -102,22 +70,20 @@ class TrackerServiceProvider extends ServiceProvider
     /**
      * Takes all the components of Tracker and glues them
      * together to create Tracker.
-     *
-     * @return void
      */
     protected function registerTracker(): void
     {
         $this->app->singleton('tracker', function ($app) {
             $app['tracker.loaded'] = true;
 
-            return new Tracker();
+            return new Tracker;
         });
     }
 
     protected function registerTablesCommand()
     {
         $this->app->singleton('tracker.tables', function ($app) {
-            return new TablesCommand();
+            return new TablesCommand;
         });
 
         $this->commands('tracker.tables');
@@ -153,13 +119,13 @@ class TrackerServiceProvider extends ServiceProvider
     }
 
     /**
-     * @param string $modelName
+     * @param  string  $modelName
      */
     protected function instantiateModel($modelName)
     {
         $model = $this->getConfig($modelName);
 
-        if (!$model) {
+        if (! $model) {
             $message = "Tracker: Model not found for '$modelName'.";
 
             $this->app['log']->error($message);
@@ -167,7 +133,7 @@ class TrackerServiceProvider extends ServiceProvider
             throw new \Exception($message);
         }
 
-        $model = new $model();
+        $model = new $model;
 
         $model->setConfig($this->app['tracker.config']);
 
@@ -182,7 +148,7 @@ class TrackerServiceProvider extends ServiceProvider
     {
         $me = $this;
 
-        if (!class_exists('Illuminate\Database\Events\QueryExecuted')) {
+        if (! class_exists('Illuminate\Database\Events\QueryExecuted')) {
             $this->app['events']->listen('illuminate.query', function (
                 $query,
                 $bindings,
@@ -199,11 +165,8 @@ class TrackerServiceProvider extends ServiceProvider
     }
 
     /**
-     * @param $query
-     * @param $bindings
-     * @param $time
-     * @param $name
-     * @param $me
+     * @param  $name
+     * @param  $me
      */
     public function logSqlQuery($query, $bindings = null, $time = null, $connectionName = null)
     {
@@ -224,11 +187,11 @@ class TrackerServiceProvider extends ServiceProvider
         $me = $this;
 
         $this->app->singleton('tracker.events', function ($app) {
-            return new EventStorage();
+            return new EventStorage;
         });
 
         $this->app['events']->listen('*', function ($object = null) use ($me) {
-            if ($me->app['tracker.events']->isOff() || !$me->isFullyBooted()) {
+            if ($me->app['tracker.events']->isOff() || ! $me->isFullyBooted()) {
                 return;
             }
 
@@ -255,7 +218,7 @@ class TrackerServiceProvider extends ServiceProvider
 
     protected function loadRoutes()
     {
-        if (!$this->getConfig('stats_panel_enabled')) {
+        if (! $this->getConfig('stats_panel_enabled')) {
             return false;
         }
 
@@ -340,7 +303,7 @@ class TrackerServiceProvider extends ServiceProvider
     protected function registerUpdateGeoIpCommand()
     {
         $this->app->singleton('tracker.updategeoip', function ($app) {
-            return new UpdateGeoIp();
+            return new UpdateGeoIp;
         });
 
         $this->commands('tracker.updategeoip');
@@ -361,28 +324,16 @@ class TrackerServiceProvider extends ServiceProvider
             }, $bindings);
 
             $all_bindings_resolved =
-                (!in_array(false, $checked_bindings, true)) ?: false;
+                (! in_array(false, $checked_bindings, true)) ?: false;
 
             if ($me->tracker &&
-                !$me->userChecked &&
+                ! $me->userChecked &&
                 $me->getConfig('log_users') &&
                 $all_bindings_resolved
             ) {
                 $me->userChecked = $me->getTracker()->checkCurrentUser();
             }
         });
-    }
-
-    /**
-     * @return Tracker
-     */
-    public function getTracker()
-    {
-        if (!$this->tracker) {
-            $this->tracker = $this->app['tracker'];
-        }
-
-        return $this->tracker;
     }
 
     public function getRootDirectory()
@@ -406,7 +357,7 @@ class TrackerServiceProvider extends ServiceProvider
     protected function registerMessageRepository()
     {
         $this->app->singleton('tracker.messages', function () {
-            return new MessageRepository();
+            return new MessageRepository;
         });
     }
 }

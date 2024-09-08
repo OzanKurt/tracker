@@ -1,11 +1,11 @@
 <?php
 
-namespace Kurt\Tracker\Data;
+namespace OzanKurt\Tracker\Data;
 
 use Illuminate\Routing\Router as IlluminateRouter;
 use Illuminate\Session\Store as IlluminateSession;
 use Kurt\Support\Config;
-use Kurt\Support\GeoIp\GeoIp;
+use Kurt\Support\Support\GeoIp\GeoIp;
 use Kurt\Tracker\Data\Repositories\Agent;
 use Kurt\Tracker\Data\Repositories\Connection;
 use Kurt\Tracker\Data\Repositories\Cookie;
@@ -655,11 +655,6 @@ class RepositoryManager implements RepositoryManagerInterface
         return $this->logRepository->updateError($error_id);
     }
 
-    public function isRobot()
-    {
-        return $this->crawlerDetector->isRobot();
-    }
-
     public function logByRouteName($name, $minutes = null)
     {
         return $this->logRepository->allByRouteName($name, $minutes);
@@ -693,11 +688,6 @@ class RepositoryManager implements RepositoryManagerInterface
     public function parserIsAvailable()
     {
         return !empty($this->userAgentParser);
-    }
-
-    public function routeIsTrackable($route)
-    {
-        return $this->routeRepository->isTrackable($route);
     }
 
     public function pathIsTrackable($path)

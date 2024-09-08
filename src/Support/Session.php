@@ -1,6 +1,6 @@
 <?php
 
-namespace Kurt\Tracker\Support;
+namespace OzanKurt\Tracker\Support;
 
 use Illuminate\Support\Facades\Request;
 use Kurt\Tracker\Support\Minutes;

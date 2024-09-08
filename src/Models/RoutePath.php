@@ -1,6 +1,6 @@
 <?php
 
-namespace Kurt\Tracker\Models;
+namespace OzanKurt\Tracker\Models;
 
 class RoutePath extends Base
 {
