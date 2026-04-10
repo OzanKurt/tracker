@@ -74,7 +74,7 @@ class Enricher
         ];
     }
 
-    private function safeVersion(Agent $agent, string $propertyName): string|bool
+    private function safeVersion(Agent $agent, string $propertyName): float|string|bool
     {
         try {
             return $agent->version($propertyName);
@@ -113,7 +113,7 @@ class Enricher
             return 'unknown';
         }
 
-        $first = explode(',', $range, 2)[0] ?? '';
+        $first = explode(',', $range, 2)[0];
         $first = trim(explode(';', $first, 2)[0]);
 
         return $first === '' ? 'unknown' : $first;
