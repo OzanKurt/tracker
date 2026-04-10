@@ -15,9 +15,9 @@ class GeoIpCache extends Model
     protected $guarded = ['id'];
 
     protected $casts = [
-        'latitude'     => 'float',
-        'longitude'    => 'float',
+        'latitude' => 'float',
+        'longitude' => 'float',
         'cached_until' => 'datetime',
-        'created_at'   => 'datetime',
+        'created_at' => 'datetime',
     ];
 }

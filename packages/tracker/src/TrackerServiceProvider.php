@@ -11,25 +11,25 @@ class TrackerServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->mergeConfigFrom(
-            __DIR__ . '/../config/tracker.php',
+            __DIR__.'/../config/tracker.php',
             'tracker'
         );
 
-        $this->app->singleton(Tracker::class, fn ($app) => new Tracker());
+        $this->app->singleton(Tracker::class, fn ($app) => new Tracker);
     }
 
     public function boot(): void
     {
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                __DIR__ . '/../config/tracker.php' => config_path('tracker.php'),
+                __DIR__.'/../config/tracker.php' => config_path('tracker.php'),
             ], 'tracker-config');
 
             $this->publishes([
-                __DIR__ . '/../database/migrations' => database_path('migrations'),
+                __DIR__.'/../database/migrations' => database_path('migrations'),
             ], 'tracker-migrations');
         }
 
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
     }
 }

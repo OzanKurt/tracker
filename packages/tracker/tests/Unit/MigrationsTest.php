@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use Illuminate\Support\Facades\Schema;
 
-beforeEach(fn () => $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations'));
+beforeEach(fn () => $this->loadMigrationsFrom(__DIR__.'/../../database/migrations'));
 
 it('creates tracker_sessions with expected columns', function () {
     expect(Schema::hasTable('tracker_sessions'))->toBeTrue();
@@ -27,7 +27,7 @@ it('creates tracker_sessions with expected columns', function () {
 it('creates tracker_page_views with expected columns', function () {
     expect(Schema::hasTable('tracker_page_views'))->toBeTrue();
     foreach (['id', 'session_id', 'method', 'path', 'route_name',
-              'route_params', 'query_params', 'status_code', 'created_at'] as $c) {
+        'route_params', 'query_params', 'status_code', 'created_at'] as $c) {
         expect(Schema::hasColumn('tracker_page_views', $c))->toBeTrue();
     }
 });
@@ -42,8 +42,8 @@ it('creates tracker_events with expected columns', function () {
 it('creates tracker_geoip_cache with expected columns', function () {
     expect(Schema::hasTable('tracker_geoip_cache'))->toBeTrue();
     foreach (['id', 'ip_hash', 'country_code', 'country_name',
-              'city', 'latitude', 'longitude', 'provider',
-              'cached_until', 'created_at'] as $c) {
+        'city', 'latitude', 'longitude', 'provider',
+        'cached_until', 'created_at'] as $c) {
         expect(Schema::hasColumn('tracker_geoip_cache', $c))->toBeTrue();
     }
 });

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace OzanKurt\Tracker\Tests;
 
-use OzanKurt\Tracker\TrackerServiceProvider;
 use Orchestra\Testbench\TestCase as BaseTestCase;
+use OzanKurt\Tracker\TrackerServiceProvider;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -18,14 +18,14 @@ abstract class TestCase extends BaseTestCase
     {
         $app['config']->set('database.default', 'testing');
         $app['config']->set('database.connections.testing', [
-            'driver'   => 'sqlite',
+            'driver' => 'sqlite',
             'database' => ':memory:',
-            'prefix'   => '',
+            'prefix' => '',
         ]);
     }
 
     protected function defineDatabaseMigrations(): void
     {
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
     }
 }

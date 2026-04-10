@@ -9,7 +9,7 @@ return [
 
     'queue' => [
         'connection' => env('TRACKER_QUEUE_CONNECTION'),
-        'name'       => env('TRACKER_QUEUE_NAME', 'default'),
+        'name' => env('TRACKER_QUEUE_NAME', 'default'),
     ],
 
     'geoip' => [
@@ -27,18 +27,18 @@ return [
     ],
 
     'privacy' => [
-        'anonymize_ip'   => true,
-        'respect_dnt'    => true,
+        'anonymize_ip' => true,
+        'respect_dnt' => true,
         'retention_days' => 90, // 0 = forever
-        'drop_bots'      => true,
+        'drop_bots' => true,
     ],
 
     'cookie' => [
-        'name'          => 'tracker_visitor',
+        'name' => 'tracker_visitor',
         'lifetime_days' => 365,
-        'secure'        => true,
-        'http_only'     => true,
-        'same_site'     => 'lax',
+        'secure' => true,
+        'http_only' => true,
+        'same_site' => 'lax',
     ],
 
     'routes' => [
@@ -52,8 +52,8 @@ return [
     ],
 
     'dashboard' => [
-        'enabled'    => true,
-        'path'       => 'tracker',
+        'enabled' => true,
+        'path' => 'tracker',
         'middleware' => ['web'],
     ],
 ];
