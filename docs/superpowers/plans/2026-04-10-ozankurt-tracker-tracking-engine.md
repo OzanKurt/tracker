@@ -1078,14 +1078,12 @@ class BotFilter
 {
     public function isBot(string $userAgent): bool
     {
-        $agent = new Agent(headers: [], userAgent: $userAgent);
-
-        return $agent->isRobot();
+        return (new Agent())->isRobot($userAgent);
     }
 }
 ```
 
-**Note**: the exact API surface of `ozankurt/agent` may differ from the above. If the class is named differently (e.g. `OzanKurt\Agent\Agent` vs `OzanKurt\Agent`), inspect `vendor/ozankurt/agent/src/` to find the correct entry point and the method name for bot detection (likely `isRobot()` or `isBot()`). Use the real API — do not mock the package. If the package has no bot detection capability, report BLOCKED and we'll add an alternative crawler detection path.
+**API reference**: `OzanKurt\Agent\Agent` extends `Detection\MobileDetect`. Constructor takes no UA (`__construct(?CacheInterface $cache = null, array $config = [])`). `isRobot($userAgent = null)` accepts the UA as an optional argument and returns a bool. Verified against `vendor/ozankurt/agent/src/Agent.php`.
 
 - [ ] **Step 4: Run → PASS**
 
@@ -1941,9 +1939,10 @@ class Enricher
      */
     public function enrich(Payload $payload): array
     {
-        $agent = new Agent(headers: [], userAgent: $payload->userAgent);
+        $agent = new Agent();
+        $agent->setUserAgent($payload->userAgent);
 
-        $deviceKind = $this->resolveDeviceKind($agent);
+        $deviceKind = $this->resolveDeviceKind($agent, $payload->userAgent);
         $platform   = (string) ($agent->platform() ?: 'unknown');
         $browser    = (string) ($agent->browser() ?: 'unknown');
 
@@ -1990,9 +1989,9 @@ class Enricher
         ];
     }
 
-    private function resolveDeviceKind(Agent $agent): string
+    private function resolveDeviceKind(Agent $agent, string $userAgent): string
     {
-        if ($agent->isRobot()) {
+        if ($agent->isRobot($userAgent)) {
             return 'bot';
         }
         if ($agent->isTablet()) {
