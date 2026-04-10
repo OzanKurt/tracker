@@ -21,7 +21,7 @@ class UsersController
             ->paginate(25);
 
         return $this->view->make('tracker::pages.users.show', [
-            'userId'   => $id,
+            'userId' => $id,
             'sessions' => $sessions,
         ]);
     }

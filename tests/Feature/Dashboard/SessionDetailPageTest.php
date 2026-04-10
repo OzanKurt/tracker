@@ -8,26 +8,26 @@ use OzanKurt\Tracker\Models\PageView;
 use OzanKurt\Tracker\Models\Session;
 
 beforeEach(function () {
-    $this->loadMigrationsFrom(__DIR__ . '/../../../database/migrations');
+    $this->loadMigrationsFrom(__DIR__.'/../../../database/migrations');
     Gate::define('viewTracker', fn ($user = null) => true);
 });
 
 it('renders the session detail page with timeline', function () {
     $session = Session::create([
-        'uuid'             => 'detail-1',
-        'visitor_uuid'     => 'v-detail-1',
-        'client_ip'        => '203.0.113.77',
-        'user_agent'       => 'Mozilla/5.0',
-        'device_kind'      => 'desktop',
-        'device_platform'  => 'macOS',
-        'browser'          => 'Chrome',
-        'browser_version'  => '120',
-        'language'         => 'en',
-        'language_range'   => 'en-US',
-        'country_code'     => 'TR',
-        'country_name'     => 'Türkiye',
-        'city'             => 'Istanbul',
-        'started_at'       => now()->subMinutes(10),
+        'uuid' => 'detail-1',
+        'visitor_uuid' => 'v-detail-1',
+        'client_ip' => '203.0.113.77',
+        'user_agent' => 'Mozilla/5.0',
+        'device_kind' => 'desktop',
+        'device_platform' => 'macOS',
+        'browser' => 'Chrome',
+        'browser_version' => '120',
+        'language' => 'en',
+        'language_range' => 'en-US',
+        'country_code' => 'TR',
+        'country_name' => 'Türkiye',
+        'city' => 'Istanbul',
+        'started_at' => now()->subMinutes(10),
         'last_activity_at' => now()->subMinutes(1),
     ]);
 

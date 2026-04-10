@@ -7,7 +7,7 @@ use OzanKurt\Tracker\Models\Event;
 use OzanKurt\Tracker\Models\Session;
 
 beforeEach(function () {
-    $this->loadMigrationsFrom(__DIR__ . '/../../../database/migrations');
+    $this->loadMigrationsFrom(__DIR__.'/../../../database/migrations');
     Gate::define('viewTracker', fn ($user = null) => true);
 });
 

@@ -31,8 +31,8 @@ class PageViewsController
 
         return $this->view->make('tracker::pages.page-views', [
             'pageViews' => $pageViews,
-            'filters'   => [
-                'path'  => $request->query('path'),
+            'filters' => [
+                'path' => $request->query('path'),
                 'route' => $request->query('route'),
             ],
         ]);

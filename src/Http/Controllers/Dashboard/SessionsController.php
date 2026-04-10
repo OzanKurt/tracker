@@ -50,26 +50,26 @@ class SessionsController
         $session = Session::where('uuid', $uuid)->firstOrFail();
 
         $pageViews = $session->pageViews()->orderBy('created_at')->get();
-        $events    = $session->events()->orderBy('created_at')->get();
+        $events = $session->events()->orderBy('created_at')->get();
 
         $timeline = collect()
-            ->merge($pageViews->map(fn ($pv) => [
-                'type'  => 'page_view',
-                'at'    => $pv->created_at,
+            ->merge($pageViews->map(fn (PageView $pv) => [
+                'type' => 'page_view',
+                'at' => $pv->created_at,
                 'label' => $pv->method.' '.$pv->path,
-                'meta'  => $pv->route_name,
+                'meta' => $pv->route_name,
             ]))
-            ->merge($events->map(fn ($ev) => [
-                'type'  => 'event',
-                'at'    => $ev->created_at,
+            ->merge($events->map(fn (Event $ev) => [
+                'type' => 'event',
+                'at' => $ev->created_at,
                 'label' => $ev->name,
-                'meta'  => $ev->payload ? json_encode($ev->payload) : null,
+                'meta' => $ev->payload ? json_encode($ev->payload) : null,
             ]))
             ->sortBy('at')
             ->values();
 
         return $this->view->make('tracker::pages.sessions.show', [
-            'session'  => $session,
+            'session' => $session,
             'timeline' => $timeline,
         ]);
     }
