@@ -32,7 +32,7 @@ class VisitorCookie
             secure:   (bool) config('tracker.cookie.secure', true),
             httpOnly: (bool) config('tracker.cookie.http_only', true),
             raw:      false,
-            sameSite: (string) config('tracker.cookie.same_site', 'lax'),
+            sameSite: $this->resolveSameSite((string) config('tracker.cookie.same_site', 'lax')),
         );
 
         return $uuid;
@@ -41,5 +41,17 @@ class VisitorCookie
     public function issuedCookie(): ?Cookie
     {
         return $this->issuedCookie;
+    }
+
+    /** @return Cookie::SAMESITE_*|''|null */
+    private function resolveSameSite(string $value): ?string
+    {
+        return match (strtolower($value)) {
+            Cookie::SAMESITE_LAX    => Cookie::SAMESITE_LAX,
+            Cookie::SAMESITE_STRICT => Cookie::SAMESITE_STRICT,
+            Cookie::SAMESITE_NONE   => Cookie::SAMESITE_NONE,
+            ''                      => '',
+            default                 => null,
+        };
     }
 }
