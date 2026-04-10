@@ -18,11 +18,14 @@ class PageView extends Model
     protected $casts = [
         'route_params' => 'array',
         'query_params' => 'array',
-        'status_code'  => 'integer',
-        'duration_ms'  => 'integer',
-        'created_at'   => 'datetime',
+        'status_code' => 'integer',
+        'duration_ms' => 'integer',
+        'created_at' => 'datetime',
     ];
 
+    /**
+     * @return BelongsTo<Session, $this>
+     */
     public function session(): BelongsTo
     {
         return $this->belongsTo(Session::class, 'session_id');

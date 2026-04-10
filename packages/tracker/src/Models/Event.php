@@ -16,10 +16,13 @@ class Event extends Model
     protected $guarded = ['id'];
 
     protected $casts = [
-        'payload'    => 'array',
+        'payload' => 'array',
         'created_at' => 'datetime',
     ];
 
+    /**
+     * @return BelongsTo<Session, $this>
+     */
     public function session(): BelongsTo
     {
         return $this->belongsTo(Session::class, 'session_id');
