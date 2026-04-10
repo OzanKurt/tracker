@@ -13,6 +13,7 @@ use OzanKurt\Tracker\Repositories\GeoIpCacheRepository;
 use OzanKurt\Tracker\Repositories\PageViewRepository;
 use OzanKurt\Tracker\Repositories\RepositoryManager;
 use OzanKurt\Tracker\Repositories\SessionRepository;
+use OzanKurt\Tracker\Stats\TrackerStats;
 use OzanKurt\Tracker\Support\BotFilter;
 use OzanKurt\Tracker\Support\Enricher;
 use OzanKurt\Tracker\Support\Pipeline;
@@ -47,6 +48,9 @@ class TrackerServiceProvider extends ServiceProvider
         // Dispatchers
         $this->app->singleton(DispatcherManager::class);
         $this->app->singleton(DeferredDispatcher::class); // must be shared across handle/terminate
+
+        // Stats
+        $this->app->singleton(TrackerStats::class);
 
         // Main service — the real Tracker class still has no constructor args at this point
         // (it'll be rewritten in the next task to depend on DispatcherManager + VisitorCookie)
