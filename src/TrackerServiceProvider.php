@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace OzanKurt\Tracker;
 
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use OzanKurt\Tracker\Console\Commands\PruneTrackerData;
 use OzanKurt\Tracker\Dispatchers\DeferredDispatcher;
 use OzanKurt\Tracker\Dispatchers\DispatcherManager;
 use OzanKurt\Tracker\GeoIp\GeoIpManager;
+use OzanKurt\Tracker\Http\Middleware\Authorize;
 use OzanKurt\Tracker\Repositories\EventRepository;
 use OzanKurt\Tracker\Repositories\GeoIpCacheRepository;
 use OzanKurt\Tracker\Repositories\PageViewRepository;
@@ -69,11 +71,30 @@ class TrackerServiceProvider extends ServiceProvider
                 __DIR__.'/../database/migrations' => database_path('migrations'),
             ], 'tracker-migrations');
 
+            $this->publishes([
+                __DIR__.'/../resources/views' => resource_path('views/vendor/tracker'),
+            ], 'tracker-views');
+
             $this->commands([
                 PruneTrackerData::class,
             ]);
         }
 
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'tracker');
+
+        if ((bool) config('tracker.dashboard.enabled', true)) {
+            Route::group([
+                'prefix' => (string) config('tracker.dashboard.path', 'tracker'),
+                'middleware' => array_merge(
+                    (array) config('tracker.dashboard.middleware', ['web']),
+                    [Authorize::class],
+                ),
+                'as' => 'tracker.',
+            ], function (): void {
+                $this->loadRoutesFrom(__DIR__.'/../routes/dashboard.php');
+            });
+        }
     }
 }
