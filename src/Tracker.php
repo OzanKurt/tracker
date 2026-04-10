@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cookie;
-use Illuminate\Support\Str;
 use OzanKurt\Tracker\Data\Payload;
 use OzanKurt\Tracker\Dispatchers\DispatcherManager;
 use OzanKurt\Tracker\Models\Event;
@@ -53,7 +52,7 @@ class Tracker
     public function sessionId(): ?string
     {
         $request = $this->resolveRequest();
-        if ($request === null || ! $request->hasSession()) {
+        if (! $request->hasSession()) {
             return null;
         }
 
@@ -65,10 +64,6 @@ class Tracker
     public function visitorId(): ?string
     {
         $request = $this->resolveRequest();
-        if ($request === null) {
-            return null;
-        }
-
         $name = (string) config('tracker.cookie.name', 'tracker_visitor');
         $value = $request->cookies->get($name);
 
@@ -161,32 +156,15 @@ class Tracker
 
     public function hasOptedOut(): bool
     {
-        $request = $this->resolveRequest();
-        if ($request === null) {
-            return false;
-        }
         $name = (string) config('tracker.cookie.name', 'tracker_visitor').'_optout';
 
-        return $request->cookies->has($name);
+        return $this->resolveRequest()->cookies->has($name);
     }
 
     private function payloadFromContext(): Payload
     {
         $request = $this->resolveRequest();
         $now = Carbon::now()->toIso8601String();
-
-        if ($request === null) {
-            return Payload::fromArray([
-                'ip' => '0.0.0.0', 'user_agent' => 'cli',
-                'method' => 'CLI', 'url' => 'cli://tracker', 'path' => '/',
-                'route_name' => null, 'route_action' => null,
-                'route_params' => [], 'query_params' => [],
-                'visitor_uuid' => (string) Str::uuid(),
-                'session_id' => (string) Str::uuid(),
-                'user_id' => null, 'referer' => null,
-                'language_range' => '', 'captured_at' => $now,
-            ]);
-        }
 
         $visitorUuid = $this->visitor->readOrIssue($request);
         $sessionId = $this->sessionId() ?? $visitorUuid;
@@ -212,12 +190,12 @@ class Tracker
         ]);
     }
 
-    private function resolveRequest(): ?Request
+    private function resolveRequest(): Request
     {
-        if (app()->runningInConsole()) {
-            return null;
-        }
-
+        // request() is always bound in the container; return it so session/cookie
+        // data is available even when the process started from the CLI (e.g. tests
+        // driven by PHPUnit/Pest, where runningInConsole() is always true but a
+        // real HTTP request has been dispatched through the test client).
         return request();
     }
 }

@@ -12,6 +12,8 @@ class VisitorCookie
 {
     private ?Cookie $issuedCookie = null;
 
+    private ?string $issuedUuid = null;
+
     public function readOrIssue(Request $request): string
     {
         $name = (string) config('tracker.cookie.name', 'tracker_visitor');
@@ -21,7 +23,13 @@ class VisitorCookie
             return $existing;
         }
 
+        // Return the already-generated UUID if this is a second call within the same request.
+        if ($this->issuedUuid !== null) {
+            return $this->issuedUuid;
+        }
+
         $uuid = (string) Str::uuid();
+        $this->issuedUuid = $uuid;
 
         $this->issuedCookie = Cookie::create(
             name: $name,
