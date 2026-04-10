@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- `Enricher` now calls `Agent::version()` and `Agent::device()` directly after
+  `ozankurt/agent v1.0.4` fixed the upstream `self::VER`/`getUtilities()` bugs.
+  The `safeVersion` / `safeDevice` try/catch workarounds were removed.
+- Minimum `ozankurt/agent` version bumped to `^1.0.4`.
+
 ## [1.0.0] - 2026-04-11
 
 First public release. A complete rewrite from the legacy `pragmarx/tracker` package,
