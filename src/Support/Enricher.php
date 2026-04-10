@@ -34,9 +34,9 @@ class Enricher
 
         $language = $this->preferredLanguage($payload->languageRange);
 
-        $platformVersion = $this->safeVersion($agent, $platform);
-        $browserVersion = $this->safeVersion($agent, $browser);
-        $deviceName = $this->safeDevice($agent);
+        $platformVersion = $agent->version($platform);
+        $browserVersion = $agent->version($browser);
+        $deviceName = $agent->device();
 
         return [
             'uuid' => $payload->sessionId,
@@ -72,24 +72,6 @@ class Enricher
             'started_at' => $payload->capturedAt,
             'last_activity_at' => $payload->capturedAt,
         ];
-    }
-
-    private function safeVersion(Agent $agent, string $propertyName): float|string|bool
-    {
-        try {
-            return $agent->version($propertyName);
-        } catch (\Error) {
-            return false;
-        }
-    }
-
-    private function safeDevice(Agent $agent): string|bool
-    {
-        try {
-            return $agent->device();
-        } catch (\BadMethodCallException) {
-            return false;
-        }
     }
 
     private function resolveDeviceKind(Agent $agent, string $userAgent): string
