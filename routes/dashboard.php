@@ -8,3 +8,4 @@ use OzanKurt\Tracker\Http\Controllers\Dashboard\SessionsController;
 
 Route::get('/', OverviewController::class)->name('overview');
 Route::get('/sessions', [SessionsController::class, 'index'])->name('sessions.index');
+Route::get('/sessions/{uuid}', [SessionsController::class, 'show'])->name('sessions.show');

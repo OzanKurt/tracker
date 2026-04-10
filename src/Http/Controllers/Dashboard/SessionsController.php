@@ -7,6 +7,8 @@ namespace OzanKurt\Tracker\Http\Controllers\Dashboard;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
+use OzanKurt\Tracker\Models\Event;
+use OzanKurt\Tracker\Models\PageView;
 use OzanKurt\Tracker\Models\Session;
 
 class SessionsController
@@ -40,6 +42,35 @@ class SessionsController
                 'device' => $request->query('device'),
                 'browser' => $request->query('browser'),
             ],
+        ]);
+    }
+
+    public function show(string $uuid): View
+    {
+        $session = Session::where('uuid', $uuid)->firstOrFail();
+
+        $pageViews = $session->pageViews()->orderBy('created_at')->get();
+        $events    = $session->events()->orderBy('created_at')->get();
+
+        $timeline = collect()
+            ->merge($pageViews->map(fn ($pv) => [
+                'type'  => 'page_view',
+                'at'    => $pv->created_at,
+                'label' => $pv->method.' '.$pv->path,
+                'meta'  => $pv->route_name,
+            ]))
+            ->merge($events->map(fn ($ev) => [
+                'type'  => 'event',
+                'at'    => $ev->created_at,
+                'label' => $ev->name,
+                'meta'  => $ev->payload ? json_encode($ev->payload) : null,
+            ]))
+            ->sortBy('at')
+            ->values();
+
+        return $this->view->make('tracker::pages.sessions.show', [
+            'session'  => $session,
+            'timeline' => $timeline,
         ]);
     }
 }
