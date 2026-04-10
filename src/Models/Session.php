@@ -8,7 +8,33 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User;
+use Illuminate\Support\Carbon;
 
+/**
+ * @property int         $id
+ * @property string      $uuid
+ * @property string      $visitor_uuid
+ * @property string|null $user_id
+ * @property string      $client_ip
+ * @property string      $user_agent
+ * @property string|null $device_kind
+ * @property string|null $device_platform
+ * @property string|null $browser
+ * @property string|null $browser_version
+ * @property string|null $language
+ * @property string|null $language_range
+ * @property bool        $is_robot
+ * @property string|null $country_code
+ * @property string|null $country_name
+ * @property string|null $city
+ * @property float|null  $latitude
+ * @property float|null  $longitude
+ * @property int         $page_views_count
+ * @property int         $events_count
+ * @property Carbon      $started_at
+ * @property Carbon      $last_activity_at
+ * @property Carbon|null $ended_at
+ */
 class Session extends Model
 {
     protected $table = 'tracker_sessions';
