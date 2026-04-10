@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace OzanKurt\Tracker;
 
 use Illuminate\Support\ServiceProvider;
+use OzanKurt\Tracker\Console\Commands\PruneTrackerData;
 use OzanKurt\Tracker\Dispatchers\DeferredDispatcher;
 use OzanKurt\Tracker\Dispatchers\DispatcherManager;
 use OzanKurt\Tracker\GeoIp\GeoIpManager;
@@ -67,6 +68,10 @@ class TrackerServiceProvider extends ServiceProvider
             $this->publishes([
                 __DIR__.'/../database/migrations' => database_path('migrations'),
             ], 'tracker-migrations');
+
+            $this->commands([
+                PruneTrackerData::class,
+            ]);
         }
 
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
