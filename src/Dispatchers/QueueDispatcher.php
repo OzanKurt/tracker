@@ -34,7 +34,7 @@ final class QueueDispatcher implements DispatcherInterface
     private function dispatchJob(string $kind, Payload $payload, ?string $name, array $eventPayload): void
     {
         $connection = config('tracker.queue.connection');
-        $queueName  = (string) config('tracker.queue.name', 'default');
+        $queueName = (string) config('tracker.queue.name', 'default');
 
         $pending = ProcessTrackerPayload::dispatch($kind, $payload->toArray(), $name, $eventPayload)
             ->onQueue($queueName);

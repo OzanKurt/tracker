@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace OzanKurt\Tracker\GeoIp;
 
+use GeoIp2\Database\Reader;
 use Throwable;
 
 final class MaxMindProvider implements GeoIpProviderInterface
@@ -16,12 +17,12 @@ final class MaxMindProvider implements GeoIpProviderInterface
             return GeoIpResult::empty();
         }
 
-        if (! class_exists(\GeoIp2\Database\Reader::class)) {
+        if (! class_exists(Reader::class)) {
             return GeoIpResult::empty();
         }
 
         try {
-            $reader = new \GeoIp2\Database\Reader($databasePath);
+            $reader = new Reader($databasePath);
             $record = $reader->city($ip);
         } catch (Throwable) {
             return GeoIpResult::empty();
@@ -30,9 +31,9 @@ final class MaxMindProvider implements GeoIpProviderInterface
         return new GeoIpResult(
             countryCode: $record->country->isoCode,
             countryName: $record->country->name,
-            city:        $record->city->name,
-            latitude:    $record->location->latitude !== null ? (float) $record->location->latitude : null,
-            longitude:   $record->location->longitude !== null ? (float) $record->location->longitude : null,
+            city: $record->city->name,
+            latitude: $record->location->latitude !== null ? (float) $record->location->latitude : null,
+            longitude: $record->location->longitude !== null ? (float) $record->location->longitude : null,
         );
     }
 

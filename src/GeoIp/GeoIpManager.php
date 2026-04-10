@@ -23,9 +23,9 @@ class GeoIpManager
             return new GeoIpResult(
                 countryCode: $cached->country_code,
                 countryName: $cached->country_name,
-                city:        $cached->city,
-                latitude:    $cached->latitude !== null ? (float) $cached->latitude : null,
-                longitude:   $cached->longitude !== null ? (float) $cached->longitude : null,
+                city: $cached->city,
+                latitude: $cached->latitude !== null ? (float) $cached->latitude : null,
+                longitude: $cached->longitude !== null ? (float) $cached->longitude : null,
             );
         }
 
@@ -35,7 +35,7 @@ class GeoIpManager
         if ($result->countryCode !== null) {
             $this->cache->put(
                 ipHash: $hash,
-                geo:    $result->toArray(),
+                geo: $result->toArray(),
                 provider: $provider->name(),
                 ttlDays: (int) config('tracker.geoip.cache_ttl_days', 30),
             );
@@ -56,10 +56,10 @@ class GeoIpManager
         }
 
         return match ((string) config('tracker.geoip.driver', 'null')) {
-            'maxmind' => new MaxMindProvider(),
-            'ipinfo'  => new IpInfoProvider(),
-            'ipapi'   => new IpApiProvider(),
-            default   => new NullProvider(),
+            'maxmind' => new MaxMindProvider,
+            'ipinfo' => new IpInfoProvider,
+            'ipapi' => new IpApiProvider,
+            default => new NullProvider,
         };
     }
 }

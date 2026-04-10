@@ -26,12 +26,12 @@ class GeoIpCacheRepository
             [
                 'country_code' => $geo['country_code'] ?? null,
                 'country_name' => $geo['country_name'] ?? null,
-                'city'         => $geo['city']         ?? null,
-                'latitude'     => $geo['latitude']     ?? null,
-                'longitude'    => $geo['longitude']    ?? null,
-                'provider'     => $provider,
+                'city' => $geo['city'] ?? null,
+                'latitude' => $geo['latitude'] ?? null,
+                'longitude' => $geo['longitude'] ?? null,
+                'provider' => $provider,
                 'cached_until' => Carbon::now()->addDays($ttlDays),
-                'created_at'   => Carbon::now(),
+                'created_at' => Carbon::now(),
             ],
         );
     }

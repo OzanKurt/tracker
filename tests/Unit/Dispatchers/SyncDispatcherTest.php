@@ -5,6 +5,7 @@ declare(strict_types=1);
 use OzanKurt\Tracker\Data\Payload;
 use OzanKurt\Tracker\Dispatchers\SyncDispatcher;
 use OzanKurt\Tracker\GeoIp\GeoIpManager;
+use OzanKurt\Tracker\GeoIp\GeoIpProviderInterface;
 use OzanKurt\Tracker\GeoIp\GeoIpResult;
 use OzanKurt\Tracker\Models\PageView;
 use OzanKurt\Tracker\Models\Session;
@@ -18,24 +19,32 @@ use OzanKurt\Tracker\Support\Enricher;
 use OzanKurt\Tracker\Support\Pipeline;
 use OzanKurt\Tracker\Support\RefererParser;
 
-beforeEach(fn () => $this->loadMigrationsFrom(__DIR__ . '/../../../database/migrations'));
+beforeEach(fn () => $this->loadMigrationsFrom(__DIR__.'/../../../database/migrations'));
 
 function makeSyncPipeline(): Pipeline
 {
-    $geo = new GeoIpManager(new GeoIpCacheRepository());
-    $geo->setProviderOverride(new class implements \OzanKurt\Tracker\GeoIp\GeoIpProviderInterface {
-        public function lookup(string $ip): GeoIpResult { return GeoIpResult::empty(); }
-        public function name(): string { return 'stub'; }
+    $geo = new GeoIpManager(new GeoIpCacheRepository);
+    $geo->setProviderOverride(new class implements GeoIpProviderInterface
+    {
+        public function lookup(string $ip): GeoIpResult
+        {
+            return GeoIpResult::empty();
+        }
+
+        public function name(): string
+        {
+            return 'stub';
+        }
     });
 
     return new Pipeline(
-        botFilter: new BotFilter(),
-        enricher:  new Enricher($geo, new RefererParser()),
+        botFilter: new BotFilter,
+        enricher: new Enricher($geo, new RefererParser),
         repositories: new RepositoryManager(
-            sessions:  new SessionRepository(),
-            pageViews: new PageViewRepository(),
-            events:    new EventRepository(),
-            geoIpCache: new GeoIpCacheRepository(),
+            sessions: new SessionRepository,
+            pageViews: new PageViewRepository,
+            events: new EventRepository,
+            geoIpCache: new GeoIpCacheRepository,
         ),
     );
 }

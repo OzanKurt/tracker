@@ -8,16 +8,16 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
 /**
- * @property int                 $id
- * @property string              $ip_hash
- * @property string|null         $country_code
- * @property string|null         $country_name
- * @property string|null         $city
- * @property float|null          $latitude
- * @property float|null          $longitude
- * @property string              $provider
- * @property Carbon              $cached_until
- * @property Carbon              $created_at
+ * @property int $id
+ * @property string $ip_hash
+ * @property string|null $country_code
+ * @property string|null $country_name
+ * @property string|null $city
+ * @property float|null $latitude
+ * @property float|null $longitude
+ * @property string $provider
+ * @property Carbon $cached_until
+ * @property Carbon $created_at
  */
 class GeoIpCache extends Model
 {

@@ -27,9 +27,9 @@ final class GeoIpResult
         return [
             'country_code' => $this->countryCode,
             'country_name' => $this->countryName,
-            'city'         => $this->city,
-            'latitude'     => $this->latitude,
-            'longitude'    => $this->longitude,
+            'city' => $this->city,
+            'latitude' => $this->latitude,
+            'longitude' => $this->longitude,
         ];
     }
 }

@@ -40,9 +40,9 @@ final class IpInfoProvider implements GeoIpProviderInterface
         return new GeoIpResult(
             countryCode: isset($data['country']) ? (string) $data['country'] : null,
             countryName: null,
-            city:        isset($data['city']) ? (string) $data['city'] : null,
-            latitude:    $lat,
-            longitude:   $lon,
+            city: isset($data['city']) ? (string) $data['city'] : null,
+            latitude: $lat,
+            longitude: $lon,
         );
     }
 

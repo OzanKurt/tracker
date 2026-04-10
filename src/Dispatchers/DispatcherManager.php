@@ -16,9 +16,9 @@ class DispatcherManager
     public function driver(): DispatcherInterface
     {
         return match ((string) config('tracker.dispatcher', 'queue')) {
-            'sync'  => new SyncDispatcher($this->app->make(Pipeline::class)),
+            'sync' => new SyncDispatcher($this->app->make(Pipeline::class)),
             'defer' => $this->app->make(DeferredDispatcher::class),
-            default => new QueueDispatcher(),
+            default => new QueueDispatcher,
         };
     }
 }

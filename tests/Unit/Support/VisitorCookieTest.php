@@ -16,7 +16,7 @@ beforeEach(function () {
 
 it('generates a new uuid when the cookie is missing', function () {
     $request = Request::create('/');
-    $cookie = new VisitorCookie();
+    $cookie = new VisitorCookie;
 
     $uuid = $cookie->readOrIssue($request);
 
@@ -31,7 +31,7 @@ it('reads an existing cookie and does not issue a new one', function () {
     $request = Request::create('/');
     $request->cookies->set('tracker_visitor', $existing);
 
-    $cookie = new VisitorCookie();
+    $cookie = new VisitorCookie;
     $uuid = $cookie->readOrIssue($request);
 
     expect($uuid)->toBe($existing)

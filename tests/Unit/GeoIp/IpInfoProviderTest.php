@@ -10,14 +10,14 @@ beforeEach(fn () => config()->set('tracker.geoip.ipinfo.token', 'fake-token'));
 it('parses the ipinfo response shape', function () {
     Http::fake([
         'ipinfo.io/*' => Http::response([
-            'ip'      => '203.0.113.5',
+            'ip' => '203.0.113.5',
             'country' => 'TR',
-            'city'    => 'Istanbul',
-            'loc'     => '41.0082,28.9784',
+            'city' => 'Istanbul',
+            'loc' => '41.0082,28.9784',
         ], 200),
     ]);
 
-    $result = (new IpInfoProvider())->lookup('203.0.113.5');
+    $result = (new IpInfoProvider)->lookup('203.0.113.5');
 
     expect($result->countryCode)->toBe('TR')
         ->and($result->city)->toBe('Istanbul')
@@ -27,5 +27,5 @@ it('parses the ipinfo response shape', function () {
 
 it('returns empty on http failure', function () {
     Http::fake(['ipinfo.io/*' => Http::response(null, 500)]);
-    expect((new IpInfoProvider())->lookup('203.0.113.5')->countryCode)->toBeNull();
+    expect((new IpInfoProvider)->lookup('203.0.113.5')->countryCode)->toBeNull();
 });

@@ -5,7 +5,7 @@ declare(strict_types=1);
 use OzanKurt\Tracker\Support\RefererParser;
 
 it('parses a google search referer', function () {
-    $parser = new RefererParser();
+    $parser = new RefererParser;
     $result = $parser->parse('https://www.google.com/search?q=ozankurt+tracker', 'example.com');
 
     expect($result->medium)->toBe('search')
@@ -16,7 +16,7 @@ it('parses a google search referer', function () {
 });
 
 it('parses a twitter social referer', function () {
-    $parser = new RefererParser();
+    $parser = new RefererParser;
     $result = $parser->parse('https://t.co/abc123', 'example.com');
 
     expect($result->medium)->toBe('social')
@@ -25,7 +25,7 @@ it('parses a twitter social referer', function () {
 });
 
 it('returns null metadata for an internal referer (same host)', function () {
-    $parser = new RefererParser();
+    $parser = new RefererParser;
     $result = $parser->parse('https://example.com/about', 'example.com');
 
     expect($result->medium)->toBe('internal')
@@ -33,7 +33,7 @@ it('returns null metadata for an internal referer (same host)', function () {
 });
 
 it('returns direct when referer is null or empty', function () {
-    $parser = new RefererParser();
+    $parser = new RefererParser;
     $result = $parser->parse(null, 'example.com');
 
     expect($result->medium)->toBe('direct')

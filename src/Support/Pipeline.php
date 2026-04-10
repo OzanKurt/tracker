@@ -26,16 +26,16 @@ class Pipeline
         $session = $this->repositories->sessions->findOrCreateByUuid($payload->sessionId, $sessionAttrs);
 
         $this->repositories->pageViews->create([
-            'session_id'   => $session->id,
-            'method'       => $payload->method,
-            'path'         => $payload->path,
-            'route_name'   => $payload->routeName,
+            'session_id' => $session->id,
+            'method' => $payload->method,
+            'path' => $payload->path,
+            'route_name' => $payload->routeName,
             'route_action' => $payload->routeAction,
             'route_params' => $payload->routeParams,
             'query_params' => $payload->queryParams,
-            'status_code'  => null,
-            'duration_ms'  => null,
-            'created_at'   => Carbon::parse($payload->capturedAt),
+            'status_code' => null,
+            'duration_ms' => null,
+            'created_at' => Carbon::parse($payload->capturedAt),
         ]);
 
         $this->repositories->sessions->touchActivity($session, pageViewDelta: 1);
@@ -55,8 +55,8 @@ class Pipeline
 
         $this->repositories->events->create([
             'session_id' => $session->id,
-            'name'       => $name,
-            'payload'    => $eventPayload,
+            'name' => $name,
+            'payload' => $eventPayload,
             'created_at' => Carbon::parse($payload->capturedAt),
         ]);
 

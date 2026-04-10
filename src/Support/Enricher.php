@@ -20,12 +20,12 @@ class Enricher
      */
     public function enrich(Payload $payload): array
     {
-        $agent = new Agent();
+        $agent = new Agent;
         $agent->setUserAgent($payload->userAgent);
 
         $deviceKind = $this->resolveDeviceKind($agent, $payload->userAgent);
-        $platform   = (string) ($agent->platform() ?: 'unknown');
-        $browser    = (string) ($agent->browser() ?: 'unknown');
+        $platform = (string) ($agent->platform() ?: 'unknown');
+        $browser = (string) ($agent->browser() ?: 'unknown');
 
         $host = (string) (parse_url($payload->url, PHP_URL_HOST) ?: '');
         $referer = $this->refererParser->parse($payload->referer, $host);
@@ -35,41 +35,41 @@ class Enricher
         $language = $this->preferredLanguage($payload->languageRange);
 
         $platformVersion = $this->safeVersion($agent, $platform);
-        $browserVersion  = $this->safeVersion($agent, $browser);
-        $deviceName      = $this->safeDevice($agent);
+        $browserVersion = $this->safeVersion($agent, $browser);
+        $deviceName = $this->safeDevice($agent);
 
         return [
-            'uuid'             => $payload->sessionId,
-            'visitor_uuid'     => $payload->visitorUuid,
-            'user_id'          => $payload->userId,
-            'client_ip'        => $payload->ip,
-            'user_agent'       => $payload->userAgent,
+            'uuid' => $payload->sessionId,
+            'visitor_uuid' => $payload->visitorUuid,
+            'user_id' => $payload->userId,
+            'client_ip' => $payload->ip,
+            'user_agent' => $payload->userAgent,
 
-            'device_kind'         => $deviceKind,
-            'device_model'        => is_string($deviceName) && $deviceName !== '' ? $deviceName : null,
-            'device_platform'     => $platform,
+            'device_kind' => $deviceKind,
+            'device_model' => is_string($deviceName) && $deviceName !== '' ? $deviceName : null,
+            'device_platform' => $platform,
             'device_platform_ver' => is_string($platformVersion) && $platformVersion !== '' ? $platformVersion : null,
-            'browser'             => $browser,
-            'browser_version'     => is_string($browserVersion) && $browserVersion !== '' ? $browserVersion : 'unknown',
+            'browser' => $browser,
+            'browser_version' => is_string($browserVersion) && $browserVersion !== '' ? $browserVersion : 'unknown',
 
-            'language'       => $language,
+            'language' => $language,
             'language_range' => $payload->languageRange,
 
             'is_robot' => $agent->isRobot($payload->userAgent),
 
             'country_code' => $geo->countryCode,
             'country_name' => $geo->countryName,
-            'city'         => $geo->city,
-            'latitude'     => $geo->latitude,
-            'longitude'    => $geo->longitude,
+            'city' => $geo->city,
+            'latitude' => $geo->latitude,
+            'longitude' => $geo->longitude,
 
-            'referer_url'         => $referer->url,
-            'referer_domain'      => $referer->domain,
-            'referer_medium'      => $referer->medium,
-            'referer_source'      => $referer->source,
+            'referer_url' => $referer->url,
+            'referer_domain' => $referer->domain,
+            'referer_medium' => $referer->medium,
+            'referer_source' => $referer->source,
             'referer_search_term' => $referer->searchTerm,
 
-            'started_at'       => $payload->capturedAt,
+            'started_at' => $payload->capturedAt,
             'last_activity_at' => $payload->capturedAt,
         ];
     }

@@ -33,9 +33,9 @@ final class IpApiProvider implements GeoIpProviderInterface
         return new GeoIpResult(
             countryCode: isset($data['countryCode']) ? (string) $data['countryCode'] : null,
             countryName: isset($data['country']) ? (string) $data['country'] : null,
-            city:        isset($data['city']) ? (string) $data['city'] : null,
-            latitude:    isset($data['lat']) ? (float) $data['lat'] : null,
-            longitude:   isset($data['lon']) ? (float) $data['lon'] : null,
+            city: isset($data['city']) ? (string) $data['city'] : null,
+            latitude: isset($data['lat']) ? (float) $data['lat'] : null,
+            longitude: isset($data['lon']) ? (float) $data['lon'] : null,
         );
     }
 

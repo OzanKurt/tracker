@@ -10,7 +10,7 @@ use OzanKurt\Tracker\Jobs\ProcessTrackerPayload;
 it('pushes a ProcessTrackerPayload job on page view dispatch', function () {
     Queue::fake();
 
-    $dispatcher = new QueueDispatcher();
+    $dispatcher = new QueueDispatcher;
 
     $payload = Payload::fromArray([
         'ip' => '203.0.113.80', 'user_agent' => 'UA',
@@ -33,7 +33,7 @@ it('pushes a ProcessTrackerPayload job on page view dispatch', function () {
 it('pushes a ProcessTrackerPayload job on event dispatch', function () {
     Queue::fake();
 
-    $dispatcher = new QueueDispatcher();
+    $dispatcher = new QueueDispatcher;
 
     $payload = Payload::fromArray([
         'ip' => '203.0.113.80', 'user_agent' => 'UA',

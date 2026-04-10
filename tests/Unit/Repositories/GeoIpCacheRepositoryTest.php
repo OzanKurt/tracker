@@ -5,22 +5,22 @@ declare(strict_types=1);
 use OzanKurt\Tracker\Models\GeoIpCache;
 use OzanKurt\Tracker\Repositories\GeoIpCacheRepository;
 
-beforeEach(fn () => $this->loadMigrationsFrom(__DIR__ . '/../../../database/migrations'));
+beforeEach(fn () => $this->loadMigrationsFrom(__DIR__.'/../../../database/migrations'));
 
 it('returns null on cache miss', function () {
-    $repo = new GeoIpCacheRepository();
+    $repo = new GeoIpCacheRepository;
     expect($repo->find('missing-hash'))->toBeNull();
 });
 
 it('stores and retrieves a cache entry', function () {
-    $repo = new GeoIpCacheRepository();
+    $repo = new GeoIpCacheRepository;
 
     $repo->put('hash-1', [
         'country_code' => 'TR',
         'country_name' => 'Türkiye',
-        'city'         => 'Istanbul',
-        'latitude'     => 41.01,
-        'longitude'    => 28.97,
+        'city' => 'Istanbul',
+        'latitude' => 41.01,
+        'longitude' => 28.97,
     ], 'ipapi', ttlDays: 30);
 
     $entry = $repo->find('hash-1');
@@ -31,13 +31,13 @@ it('stores and retrieves a cache entry', function () {
 
 it('ignores expired cache entries', function () {
     GeoIpCache::create([
-        'ip_hash'      => 'expired-hash',
+        'ip_hash' => 'expired-hash',
         'country_code' => 'US',
-        'provider'     => 'ipapi',
+        'provider' => 'ipapi',
         'cached_until' => now()->subDay(),
-        'created_at'   => now()->subDays(10),
+        'created_at' => now()->subDays(10),
     ]);
 
-    $repo = new GeoIpCacheRepository();
+    $repo = new GeoIpCacheRepository;
     expect($repo->find('expired-hash'))->toBeNull();
 });

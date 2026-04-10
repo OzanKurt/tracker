@@ -39,6 +39,7 @@ final class DeferredDispatcher implements DispatcherInterface
         foreach ($this->queue as $entry) {
             if ($entry['kind'] === 'page_view') {
                 $this->pipeline->process($entry['payload']);
+
                 continue;
             }
 

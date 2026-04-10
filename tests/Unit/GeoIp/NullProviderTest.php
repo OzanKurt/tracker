@@ -6,7 +6,7 @@ use OzanKurt\Tracker\GeoIp\GeoIpResult;
 use OzanKurt\Tracker\GeoIp\NullProvider;
 
 it('returns an empty result for any ip', function () {
-    $provider = new NullProvider();
+    $provider = new NullProvider;
     $result = $provider->lookup('203.0.113.5');
 
     expect($result)->toBeInstanceOf(GeoIpResult::class)
@@ -15,5 +15,5 @@ it('returns an empty result for any ip', function () {
 });
 
 it('reports its name as null', function () {
-    expect((new NullProvider())->name())->toBe('null');
+    expect((new NullProvider)->name())->toBe('null');
 });

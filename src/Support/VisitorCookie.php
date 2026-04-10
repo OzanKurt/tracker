@@ -24,14 +24,14 @@ class VisitorCookie
         $uuid = (string) Str::uuid();
 
         $this->issuedCookie = Cookie::create(
-            name:     $name,
-            value:    $uuid,
-            expire:   time() + ((int) config('tracker.cookie.lifetime_days', 365) * 86400),
-            path:     '/',
-            domain:   null,
-            secure:   (bool) config('tracker.cookie.secure', true),
+            name: $name,
+            value: $uuid,
+            expire: time() + ((int) config('tracker.cookie.lifetime_days', 365) * 86400),
+            path: '/',
+            domain: null,
+            secure: (bool) config('tracker.cookie.secure', true),
             httpOnly: (bool) config('tracker.cookie.http_only', true),
-            raw:      false,
+            raw: false,
             sameSite: $this->resolveSameSite((string) config('tracker.cookie.same_site', 'lax')),
         );
 
@@ -47,11 +47,11 @@ class VisitorCookie
     private function resolveSameSite(string $value): ?string
     {
         return match (strtolower($value)) {
-            Cookie::SAMESITE_LAX    => Cookie::SAMESITE_LAX,
+            Cookie::SAMESITE_LAX => Cookie::SAMESITE_LAX,
             Cookie::SAMESITE_STRICT => Cookie::SAMESITE_STRICT,
-            Cookie::SAMESITE_NONE   => Cookie::SAMESITE_NONE,
-            ''                      => '',
-            default                 => null,
+            Cookie::SAMESITE_NONE => Cookie::SAMESITE_NONE,
+            '' => '',
+            default => null,
         };
     }
 }

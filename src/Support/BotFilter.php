@@ -10,6 +10,6 @@ class BotFilter
 {
     public function isBot(string $userAgent): bool
     {
-        return (new Agent())->isRobot($userAgent);
+        return (new Agent)->isRobot($userAgent);
     }
 }
