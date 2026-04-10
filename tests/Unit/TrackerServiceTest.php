@@ -7,7 +7,7 @@ use OzanKurt\Tracker\Jobs\ProcessTrackerPayload;
 use OzanKurt\Tracker\Models\Session;
 use OzanKurt\Tracker\Tracker;
 
-beforeEach(fn () => $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations'));
+beforeEach(fn () => $this->loadMigrationsFrom(__DIR__.'/../../database/migrations'));
 
 it('returns online users filtered by the last activity window', function () {
     Session::create([

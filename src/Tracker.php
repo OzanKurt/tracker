@@ -52,8 +52,8 @@ class Tracker
 
     public function sessionId(): ?string
     {
-        $request = request();
-        if (! $request instanceof Request || ! $request->hasSession()) {
+        $request = $this->resolveRequest();
+        if ($request === null || ! $request->hasSession()) {
             return null;
         }
 
@@ -64,8 +64,8 @@ class Tracker
 
     public function visitorId(): ?string
     {
-        $request = request();
-        if (! $request instanceof Request) {
+        $request = $this->resolveRequest();
+        if ($request === null) {
             return null;
         }
 
@@ -161,8 +161,8 @@ class Tracker
 
     public function hasOptedOut(): bool
     {
-        $request = request();
-        if (! $request instanceof Request) {
+        $request = $this->resolveRequest();
+        if ($request === null) {
             return false;
         }
         $name = (string) config('tracker.cookie.name', 'tracker_visitor').'_optout';
@@ -172,7 +172,7 @@ class Tracker
 
     private function payloadFromContext(): Payload
     {
-        $request = request() instanceof Request ? request() : null;
+        $request = $this->resolveRequest();
         $now = Carbon::now()->toIso8601String();
 
         if ($request === null) {
@@ -194,21 +194,30 @@ class Tracker
         $route = $request->route();
 
         return Payload::fromArray([
-            'ip'             => (string) ($request->ip() ?? '0.0.0.0'),
-            'user_agent'     => (string) $request->userAgent(),
-            'method'         => $request->getMethod(),
-            'url'            => $request->fullUrl(),
-            'path'           => '/'.ltrim($request->path(), '/'),
-            'route_name'     => $route !== null ? $route->getName() : null,
-            'route_action'   => $route !== null ? $route->getActionName() : null,
-            'route_params'   => $route !== null ? $route->parameters() : [],
-            'query_params'   => $request->query(),
-            'visitor_uuid'   => $visitorUuid,
-            'session_id'     => $sessionId,
-            'user_id'        => $request->user() !== null ? $request->user()->getAuthIdentifier() : null,
-            'referer'        => $request->headers->get('referer'),
+            'ip' => (string) ($request->ip() ?? '0.0.0.0'),
+            'user_agent' => (string) $request->userAgent(),
+            'method' => $request->getMethod(),
+            'url' => $request->fullUrl(),
+            'path' => '/'.ltrim($request->path(), '/'),
+            'route_name' => $route !== null ? $route->getName() : null,
+            'route_action' => $route !== null ? $route->getActionName() : null,
+            'route_params' => $route !== null ? $route->parameters() : [],
+            'query_params' => $request->query(),
+            'visitor_uuid' => $visitorUuid,
+            'session_id' => $sessionId,
+            'user_id' => $request->user() !== null ? $request->user()->getAuthIdentifier() : null,
+            'referer' => $request->headers->get('referer'),
             'language_range' => (string) $request->headers->get('accept-language', ''),
-            'captured_at'    => $now,
+            'captured_at' => $now,
         ]);
+    }
+
+    private function resolveRequest(): ?Request
+    {
+        if (app()->runningInConsole()) {
+            return null;
+        }
+
+        return request();
     }
 }
