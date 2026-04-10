@@ -1,0 +1,52 @@
+{
+    "name": "ozankurt/tracker",
+    "description": "A modern, privacy-first Laravel visitor analytics package.",
+    "keywords": ["laravel", "tracker", "analytics", "visitor", "privacy", "geoip"],
+    "license": "MIT",
+    "authors": [
+        { "name": "Ozan Kurt", "email": "kurtozan@gmail.com" }
+    ],
+    "require": {
+        "php": "^8.3",
+        "laravel/framework": "^12.0",
+        "ozankurt/agent": "^1.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^10.0",
+        "pestphp/pest": "^3.0",
+        "pestphp/pest-plugin-laravel": "^3.0",
+        "larastan/larastan": "^3.0",
+        "laravel/pint": "^1.18"
+    },
+    "suggest": {
+        "geoip2/geoip2": "Enables the MaxMind GeoLite2 geo-IP driver"
+    },
+    "autoload": {
+        "psr-4": {
+            "OzanKurt\\Tracker\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "OzanKurt\\Tracker\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "OzanKurt\\Tracker\\TrackerServiceProvider"
+            ],
+            "aliases": {
+                "Tracker": "OzanKurt\\Tracker\\Facades\\Tracker"
+            }
+        }
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
