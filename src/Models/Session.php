@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace OzanKurt\Tracker\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User;
@@ -35,7 +34,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon $last_activity_at
  * @property Carbon|null $ended_at
  */
-class Session extends Model
+class Session extends BaseModel
 {
     protected $table = 'tracker_sessions';
 

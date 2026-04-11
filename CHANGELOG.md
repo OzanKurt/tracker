@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.3] - 2026-04-11
+
+### Added
+- New `connection` config key (env: `TRACKER_DB_CONNECTION`). Set it to point
+  tracker tables at a dedicated connection — e.g. `mysql_tracker` in
+  `config/database.php` — to keep analytics data on a separate database for
+  backup, retention, or read-replica purposes. Leave `null` to use the default
+  connection (existing behaviour, no migration needed).
+- `OzanKurt\Tracker\Models\BaseModel` — all four tracker models
+  (`Session`, `PageView`, `Event`, `GeoIpCache`) now extend it and honour the
+  configured connection at runtime.
+
+### Changed
+- Package migrations wrap `Schema::create` / `Schema::dropIfExists` in
+  `Schema::connection(config('tracker.connection'))->...` so publishing +
+  migrating against a non-default connection just works.
+- `TrackerStats` derives SQL dialect from the `Session` model's own connection
+  instead of the global `DB::getDriverName()`, so `sessionsOverTime` and
+  `pageViewsOverTime` return correct bucket expressions when tracker tables
+  live on a different driver than the default app connection.
+
 ## [1.0.2] - 2026-04-11
 
 ### Fixed

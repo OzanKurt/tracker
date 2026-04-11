@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace OzanKurt\Tracker\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
@@ -15,7 +14,7 @@ use Illuminate\Support\Carbon;
  * @property array<string,mixed>|null $payload
  * @property Carbon $created_at
  */
-class Event extends Model
+class Event extends BaseModel
 {
     public $timestamps = false;
 

@@ -110,7 +110,7 @@ class TrackerStats
         $expression = $this->bucketExpression(
             column: 'started_at',
             interval: $interval,
-            driver: DB::getDriverName(),
+            driver: (new Session)->getConnection()->getDriverName(),
         );
 
         /** @var Collection<int, Session> $result */
@@ -132,7 +132,7 @@ class TrackerStats
         $expression = $this->bucketExpression(
             column: 'created_at',
             interval: $interval,
-            driver: DB::getDriverName(),
+            driver: (new Session)->getConnection()->getDriverName(),
         );
 
         /** @var Collection<int, PageView> $result */

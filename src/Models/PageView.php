@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace OzanKurt\Tracker\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
@@ -21,7 +20,7 @@ use Illuminate\Support\Carbon;
  * @property int|null $duration_ms
  * @property Carbon $created_at
  */
-class PageView extends Model
+class PageView extends BaseModel
 {
     public $timestamps = false;
 

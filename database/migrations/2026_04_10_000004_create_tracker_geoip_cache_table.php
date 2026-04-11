@@ -10,7 +10,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('tracker_geoip_cache', function (Blueprint $table) {
+        Schema::connection(config('tracker.connection'))->create('tracker_geoip_cache', function (Blueprint $table) {
             $table->id();
             $table->char('ip_hash', 64)->unique();
             $table->char('country_code', 2)->nullable();
@@ -26,6 +26,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('tracker_geoip_cache');
+        Schema::connection(config('tracker.connection'))->dropIfExists('tracker_geoip_cache');
     }
 };

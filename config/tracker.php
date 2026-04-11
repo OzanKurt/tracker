@@ -5,6 +5,23 @@ declare(strict_types=1);
 return [
     'enabled' => env('TRACKER_ENABLED', true),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Database connection
+    |--------------------------------------------------------------------------
+    |
+    | Which database connection the tracker models and migrations use.
+    | Leave null to use the default app connection.
+    |
+    | Set to something like `mysql_tracker` to isolate tracker tables from the
+    | rest of the application — handy for separate backup / retention policies,
+    | or pointing analytics at a read replica / dedicated analytics database.
+    | The connection name must exist in `config/database.php`.
+    |
+    */
+
+    'connection' => env('TRACKER_DB_CONNECTION'),
+
     'dispatcher' => env('TRACKER_DISPATCHER', 'queue'), // queue | sync | defer
 
     'queue' => [

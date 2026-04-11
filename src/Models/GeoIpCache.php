@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace OzanKurt\Tracker\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
 /**
@@ -19,7 +18,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon $cached_until
  * @property Carbon $created_at
  */
-class GeoIpCache extends Model
+class GeoIpCache extends BaseModel
 {
     public $timestamps = false;
 

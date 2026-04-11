@@ -10,7 +10,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('tracker_sessions', function (Blueprint $table) {
+        Schema::connection(config('tracker.connection'))->create('tracker_sessions', function (Blueprint $table) {
             $table->id();
             $table->char('uuid', 36)->unique();
             $table->char('visitor_uuid', 36)->index();
@@ -56,6 +56,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('tracker_sessions');
+        Schema::connection(config('tracker.connection'))->dropIfExists('tracker_sessions');
     }
 };
