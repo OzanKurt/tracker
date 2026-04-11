@@ -43,10 +43,15 @@ return [
 
     'routes' => [
         'ignore' => [
+            'tracker',
             'tracker/*',
+            'telescope',
             'telescope/*',
+            'horizon',
             'horizon/*',
+            '_debugbar',
             '_debugbar/*',
+            'livewire',
             'livewire/*',
         ],
     ],

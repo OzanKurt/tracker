@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.2] - 2026-04-11
+
+### Fixed
+- Default `routes.ignore` now excludes the bare `tracker`, `telescope`,
+  `horizon`, `_debugbar`, and `livewire` paths in addition to their
+  `*/` glob variants. Previously the dashboard overview page at `/tracker`
+  self-tracked because `Str::is('tracker/*', 'tracker')` returns `false`.
+
 ## [1.0.1] - 2026-04-11
 
 ### Changed

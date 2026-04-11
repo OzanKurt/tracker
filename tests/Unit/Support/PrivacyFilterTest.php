@@ -9,7 +9,7 @@ beforeEach(function () {
     config()->set('tracker.enabled', true);
     config()->set('tracker.privacy.respect_dnt', true);
     config()->set('tracker.cookie.name', 'tracker_visitor');
-    config()->set('tracker.routes.ignore', ['tracker/*', 'telescope/*']);
+    config()->set('tracker.routes.ignore', ['tracker', 'tracker/*', 'telescope', 'telescope/*']);
 });
 
 it('allows normal requests', function () {
@@ -29,6 +29,12 @@ it('blocks ignored routes by glob', function () {
     expect($filter->shouldTrack(Request::create('/tracker/sessions')))->toBeFalse()
         ->and($filter->shouldTrack(Request::create('/telescope/requests')))->toBeFalse()
         ->and($filter->shouldTrack(Request::create('/dashboard')))->toBeTrue();
+});
+
+it('blocks bare ignored routes without a trailing segment', function () {
+    $filter = new PrivacyFilter;
+    expect($filter->shouldTrack(Request::create('/tracker')))->toBeFalse()
+        ->and($filter->shouldTrack(Request::create('/telescope')))->toBeFalse();
 });
 
 it('blocks when DNT header is 1 and respect_dnt is true', function () {
