@@ -54,7 +54,7 @@ class PrivacyFilter
 
     private function isDntRequest(Request $request): bool
     {
-        if (! (bool) config('tracker.privacy.respect_dnt', true)) {
+        if (! (bool) config('tracker.privacy.respect_dnt', false)) {
             return false;
         }
 

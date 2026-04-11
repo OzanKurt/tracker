@@ -27,10 +27,10 @@ return [
     ],
 
     'privacy' => [
-        'anonymize_ip' => true,
-        'respect_dnt' => true,
-        'retention_days' => 90, // 0 = forever
-        'drop_bots' => true,
+        'anonymize_ip' => env('TRACKER_ANONYMIZE_IP', true),
+        'respect_dnt' => env('TRACKER_RESPECT_DNT', false),
+        'retention_days' => (int) env('TRACKER_RETENTION_DAYS', 90), // 0 = forever
+        'drop_bots' => env('TRACKER_DROP_BOTS', true),
     ],
 
     'cookie' => [

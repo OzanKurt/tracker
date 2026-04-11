@@ -7,7 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-04-11
+
 ### Changed
+- **BC:** `privacy.respect_dnt` now defaults to `false`. The previous default
+  silently dropped every visitor whose browser sends `DNT: 1` (Firefox, Brave,
+  Tor), which in practice meant the tracker recorded nothing for a large slice
+  of real traffic. Set `TRACKER_RESPECT_DNT=true` to restore the old behavior.
+- Privacy settings are now env-driven: `TRACKER_ANONYMIZE_IP`,
+  `TRACKER_RESPECT_DNT`, `TRACKER_RETENTION_DAYS`, `TRACKER_DROP_BOTS`.
 - `Enricher` now calls `Agent::version()` and `Agent::device()` directly after
   `ozankurt/agent v1.0.4` fixed the upstream `self::VER`/`getUtilities()` bugs.
   The `safeVersion` / `safeDevice` try/catch workarounds were removed.
