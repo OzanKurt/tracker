@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [main]
 
+
+permissions:
+  contents: read
+
 jobs:
   test:
     name: Pest (PHP ${{ matrix.php }}, ${{ matrix.db }})
@@ -45,17 +49,17 @@ jobs:
           --health-retries=5
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@7c071dfe9dc99bdf297fa79cb49ea005b9fcadbc # v2
         with:
           php-version: ${{ matrix.php }}
           extensions: pdo, pdo_mysql, pdo_pgsql, pdo_sqlite, mbstring, curl, intl
           coverage: none
 
       - name: Cache composer dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: vendor
           key: composer-${{ matrix.php }}-${{ hashFiles('composer.json') }}
@@ -77,9 +81,9 @@ jobs:
     name: Static analysis
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@7c071dfe9dc99bdf297fa79cb49ea005b9fcadbc # v2
         with:
           php-version: '8.3'
           extensions: mbstring, curl, intl
@@ -93,9 +97,9 @@ jobs:
     name: Code style
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@7c071dfe9dc99bdf297fa79cb49ea005b9fcadbc # v2
         with:
           php-version: '8.3'
           extensions: mbstring, curl, intl
