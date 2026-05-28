@@ -7,6 +7,62 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Security
+- `IpApiProvider` switches to `https://` so on-path attackers can no longer
+  rewrite country/city responses. Free-tier `ip-api.com` users will need to
+  upgrade to the paid plan or switch to another provider.
+- All three GeoIP providers (`IpApi`, `IpInfo`, `MaxMind`) reject invalid IP
+  strings via `FILTER_VALIDATE_IP` before any I/O, defending against
+  URL-path injection if a downstream app trusts a forged
+  `X-Forwarded-For`.
+- `GeoIpCache` keys entries with `hash_hmac` seeded by `APP_KEY`, so a
+  stolen `tracker_geoip_cache` table can't be rainbow-tabled back to raw
+  IPs.
+- Dashboard authorization is now configurable via
+  `tracker.dashboard.gate` (default `viewTracker`) and
+  `tracker.dashboard.allow_without_gate_envs` (default
+  `['local', 'testing']`). Setting the env list to `[]` forces every
+  environment to register the gate — production never falls open.
+- `PageViewsController` path filter escapes `LIKE` wildcards (`%`, `_`,
+  `\`) with an explicit `ESCAPE '\'` clause so a crafted filter can't
+  trigger a table-wide scan.
+- `Tracker::optOut()` applies the same `Secure` / `HttpOnly` / `SameSite`
+  flags as the visitor cookie — an HTTP downgrade can no longer strip
+  the opt-out signal.
+
+### Added
+- `PrivacyFilter::anonymize(string $ip)` masks the last octet of IPv4 and
+  the last 80 bits of IPv6 when `tracker.privacy.anonymize_ip` is on.
+  `Enricher` applies it to `client_ip` before persisting; GeoIP lookups
+  still see the real IP so country/city remain accurate.
+- `PrivacyFilter::scrub(array $params)` redacts query / route params whose
+  keys match any glob in `tracker.privacy.scrub_param_keys` (default
+  `[]`). Use it to keep reset tokens, OAuth state, or signed URLs out
+  of the DB.
+- `tracker.cookie.{name,lifetime_days,secure,http_only,same_site}` are
+  now env-bindable (`TRACKER_COOKIE_NAME`, `TRACKER_COOKIE_LIFETIME_DAYS`,
+  `TRACKER_COOKIE_SECURE`, `TRACKER_COOKIE_HTTP_ONLY`,
+  `TRACKER_COOKIE_SAME_SITE`).
+- `tracker.dashboard.{enabled,path,gate,allow_without_gate_envs}` are
+  now env-bindable.
+
+### Changed
+- **BC for direct callers:** `Enricher::__construct` now requires a third
+  `PrivacyFilter` argument. The package's own service container resolves
+  this automatically; only code that instantiates `Enricher` directly
+  (typically tests) needs to update.
+- `tracker.privacy.anonymize_ip` defaults to `false`. The previous default
+  of `true` advertised behaviour that wasn't actually implemented — the
+  feature now works, but ships off so existing installs keep recording
+  full IPs. Flip `TRACKER_ANONYMIZE_IP=true` to opt in.
+- `PrivacyFilter::isIgnoredRoute` automatically includes the configured
+  `dashboard.path` (and its `/*` glob), so a custom dashboard path no
+  longer self-tracks.
+
+### Fixed
+- IP anonymization is now actually applied. Previously the flag had no
+  effect — the raw IP was stored regardless.
+
 ## [1.0.3] - 2026-04-11
 
 ### Added

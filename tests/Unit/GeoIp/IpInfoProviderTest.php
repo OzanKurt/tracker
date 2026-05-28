@@ -29,3 +29,12 @@ it('returns empty on http failure', function () {
     Http::fake(['ipinfo.io/*' => Http::response(null, 500)]);
     expect((new IpInfoProvider)->lookup('203.0.113.5')->countryCode)->toBeNull();
 });
+
+it('short-circuits and skips the HTTP call when the IP is malformed', function () {
+    Http::fake();
+
+    $result = (new IpInfoProvider)->lookup('not-an-ip/etc');
+
+    expect($result->countryCode)->toBeNull();
+    Http::assertNothingSent();
+});

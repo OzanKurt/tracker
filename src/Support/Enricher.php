@@ -13,6 +13,7 @@ class Enricher
     public function __construct(
         private readonly GeoIpManager $geoIp,
         private readonly RefererParser $refererParser,
+        private readonly PrivacyFilter $privacy,
     ) {}
 
     /**
@@ -30,6 +31,9 @@ class Enricher
         $host = (string) (parse_url($payload->url, PHP_URL_HOST) ?: '');
         $referer = $this->refererParser->parse($payload->referer, $host);
 
+        // GeoIP gets the real IP so country/city stay accurate; the value
+        // persisted on the session goes through anonymize() so the /24 (or
+        // /48 for IPv6) is dropped when the opt-in flag is on.
         $geo = $this->geoIp->lookup($payload->ip);
 
         $language = $this->preferredLanguage($payload->languageRange);
@@ -42,7 +46,7 @@ class Enricher
             'uuid' => $payload->sessionId,
             'visitor_uuid' => $payload->visitorUuid,
             'user_id' => $payload->userId,
-            'client_ip' => $payload->ip,
+            'client_ip' => $this->privacy->anonymize($payload->ip),
             'user_agent' => $payload->userAgent,
 
             'device_kind' => $deviceKind,

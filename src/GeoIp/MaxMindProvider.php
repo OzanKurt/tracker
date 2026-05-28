@@ -11,6 +11,10 @@ final class MaxMindProvider implements GeoIpProviderInterface
 {
     public function lookup(string $ip): GeoIpResult
     {
+        if (! filter_var($ip, FILTER_VALIDATE_IP)) {
+            return GeoIpResult::empty();
+        }
+
         $databasePath = (string) config('tracker.geoip.maxmind.database', '');
 
         if ($databasePath === '' || ! is_readable($databasePath)) {

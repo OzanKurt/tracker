@@ -48,3 +48,23 @@ it('denies in production environment when no gate is defined', function () {
     expect(fn () => $middleware->handle(Request::create('/tracker'), fn () => new Response('ok')))
         ->toThrow(HttpException::class);
 });
+
+it('respects a custom dashboard.gate name', function () {
+    config()->set('tracker.dashboard.gate', 'viewAnalytics');
+    Gate::define('viewAnalytics', fn ($user = null) => true);
+
+    $middleware = new Authorize;
+    $response = $middleware->handle(Request::create('/tracker'), fn () => new Response('ok'));
+
+    expect($response->getContent())->toBe('ok');
+});
+
+it('denies in local when allow_without_gate_envs is empty and no gate is defined', function () {
+    app()['env'] = 'local';
+    config()->set('tracker.dashboard.allow_without_gate_envs', []);
+
+    $middleware = new Authorize;
+
+    expect(fn () => $middleware->handle(Request::create('/tracker'), fn () => new Response('ok')))
+        ->toThrow(HttpException::class);
+});

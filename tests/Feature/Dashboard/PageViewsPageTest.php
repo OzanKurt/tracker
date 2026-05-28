@@ -61,3 +61,34 @@ it('filters by path substring', function () {
         ->assertSee('/admin/users')
         ->assertDontSee('/home');
 });
+
+it('escapes LIKE wildcards in the path filter so % does not match across paths', function () {
+    $session = Session::create([
+        'uuid' => 'pv-list-3', 'visitor_uuid' => 'v-3', 'client_ip' => '3.3.3.3',
+        'user_agent' => 'UA', 'device_kind' => 'desktop', 'device_platform' => 'macOS',
+        'browser' => 'Chrome', 'browser_version' => '120',
+        'language' => 'en', 'language_range' => 'en-US',
+        'started_at' => now(), 'last_activity_at' => now(),
+    ]);
+
+    // One path that literally contains a percent sign and one that doesn't.
+    PageView::create([
+        'session_id' => $session->id, 'method' => 'GET', 'path' => '/checkout/50%off',
+        'route_name' => null, 'route_action' => null,
+        'route_params' => [], 'query_params' => [],
+        'status_code' => 200, 'duration_ms' => 15, 'created_at' => now(),
+    ]);
+    PageView::create([
+        'session_id' => $session->id, 'method' => 'GET', 'path' => '/checkout/cart',
+        'route_name' => null, 'route_action' => null,
+        'route_params' => [], 'query_params' => [],
+        'status_code' => 200, 'duration_ms' => 15, 'created_at' => now(),
+    ]);
+
+    // Without escaping, '%off' would match any path ending in 'off'. Escaped,
+    // it only matches the row that literally contains '%off'.
+    $this->get('/tracker/page-views?path=%25off')
+        ->assertOk()
+        ->assertSee('/checkout/50%off')
+        ->assertDontSee('/checkout/cart');
+});

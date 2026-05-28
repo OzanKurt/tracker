@@ -44,3 +44,12 @@ it('returns an empty result on http error', function () {
     $result = (new IpApiProvider)->lookup('203.0.113.5');
     expect($result->countryCode)->toBeNull();
 });
+
+it('short-circuits and skips the HTTP call when the IP is malformed', function () {
+    Http::fake();
+
+    $result = (new IpApiProvider)->lookup('not-an-ip/etc');
+
+    expect($result->countryCode)->toBeNull();
+    Http::assertNothingSent();
+});

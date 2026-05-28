@@ -8,6 +8,7 @@ use OzanKurt\Tracker\GeoIp\GeoIpProviderInterface;
 use OzanKurt\Tracker\GeoIp\GeoIpResult;
 use OzanKurt\Tracker\Repositories\GeoIpCacheRepository;
 use OzanKurt\Tracker\Support\Enricher;
+use OzanKurt\Tracker\Support\PrivacyFilter;
 use OzanKurt\Tracker\Support\RefererParser;
 
 beforeEach(fn () => $this->loadMigrationsFrom(__DIR__.'/../../../database/migrations'));
@@ -27,7 +28,7 @@ it('enriches a payload with device, geo and referer data', function () {
         }
     });
 
-    $enricher = new Enricher($geoManager, new RefererParser);
+    $enricher = new Enricher($geoManager, new RefererParser, new PrivacyFilter);
 
     $payload = Payload::fromArray([
         'ip' => '203.0.113.50',
@@ -57,4 +58,53 @@ it('enriches a payload with device, geo and referer data', function () {
         ->and($data['referer_source'])->toBe('google')
         ->and($data['referer_search_term'])->toBe('ozankurt')
         ->and($data['language'])->toBe('en-US');
+});
+
+it('anonymizes the client IP when the opt-in flag is on, but still resolves geo from the real IP', function () {
+    config()->set('tracker.privacy.anonymize_ip', true);
+
+    $seenByGeoIp = null;
+    $geoManager = new GeoIpManager(new GeoIpCacheRepository);
+    $geoManager->setProviderOverride(new class($seenByGeoIp) implements GeoIpProviderInterface
+    {
+        public function __construct(public ?string &$seen) {}
+
+        public function lookup(string $ip): GeoIpResult
+        {
+            $this->seen = $ip;
+
+            return new GeoIpResult('TR', 'Türkiye', 'Istanbul', 41.01, 28.97);
+        }
+
+        public function name(): string
+        {
+            return 'stub';
+        }
+    });
+
+    $enricher = new Enricher($geoManager, new RefererParser, new PrivacyFilter);
+
+    $payload = Payload::fromArray([
+        'ip' => '203.0.113.50',
+        'user_agent' => 'Mozilla/5.0 Chrome/120',
+        'method' => 'GET',
+        'url' => 'https://myapp.test/',
+        'path' => '/',
+        'route_name' => null,
+        'route_action' => null,
+        'route_params' => [],
+        'query_params' => [],
+        'visitor_uuid' => '11111111-1111-1111-1111-111111111111',
+        'session_id' => '22222222-2222-2222-2222-222222222222',
+        'user_id' => null,
+        'referer' => null,
+        'language_range' => '',
+        'captured_at' => '2026-04-10T12:00:00+00:00',
+    ]);
+
+    $data = $enricher->enrich($payload);
+
+    expect($data['client_ip'])->toBe('203.0.113.0')
+        ->and($seenByGeoIp)->toBe('203.0.113.50')
+        ->and($data['country_code'])->toBe('TR');
 });

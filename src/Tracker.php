@@ -13,6 +13,7 @@ use OzanKurt\Tracker\Dispatchers\DispatcherManager;
 use OzanKurt\Tracker\Models\Event;
 use OzanKurt\Tracker\Models\PageView;
 use OzanKurt\Tracker\Models\Session;
+use OzanKurt\Tracker\Support\PrivacyFilter;
 use OzanKurt\Tracker\Support\VisitorCookie;
 
 class Tracker
@@ -22,6 +23,7 @@ class Tracker
     public function __construct(
         private readonly DispatcherManager $dispatchers,
         private readonly VisitorCookie $visitor,
+        private readonly PrivacyFilter $privacy,
     ) {}
 
     public function enable(): void
@@ -141,10 +143,20 @@ class Tracker
     public function optOut(): void
     {
         $name = (string) config('tracker.cookie.name', 'tracker_visitor').'_optout';
+
+        // Mirror VisitorCookie flags so the opt-out cookie inherits the same
+        // Secure / HttpOnly / SameSite posture the visitor cookie was set
+        // with — otherwise an HTTP downgrade can strip the opt-out signal.
         Cookie::queue(Cookie::make(
             name: $name,
             value: '1',
             minutes: (int) config('tracker.cookie.lifetime_days', 365) * 24 * 60,
+            path: '/',
+            domain: null,
+            secure: (bool) config('tracker.cookie.secure', true),
+            httpOnly: (bool) config('tracker.cookie.http_only', true),
+            raw: false,
+            sameSite: (string) config('tracker.cookie.same_site', 'lax'),
         ));
     }
 
@@ -179,8 +191,8 @@ class Tracker
             'path' => '/'.ltrim($request->path(), '/'),
             'route_name' => $route !== null ? $route->getName() : null,
             'route_action' => $route !== null ? $route->getActionName() : null,
-            'route_params' => $route !== null ? $route->parameters() : [],
-            'query_params' => $request->query(),
+            'route_params' => $this->privacy->scrub($route !== null ? $route->parameters() : []),
+            'query_params' => $this->privacy->scrub((array) $request->query()),
             'visitor_uuid' => $visitorUuid,
             'session_id' => $sessionId,
             'user_id' => $request->user() !== null ? $request->user()->getAuthIdentifier() : null,

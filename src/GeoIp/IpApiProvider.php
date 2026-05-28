@@ -11,8 +11,16 @@ final class IpApiProvider implements GeoIpProviderInterface
 {
     public function lookup(string $ip): GeoIpResult
     {
+        if (! filter_var($ip, FILTER_VALIDATE_IP)) {
+            return GeoIpResult::empty();
+        }
+
+        // ip-api.com requires the paid pro plan for HTTPS. We default to it
+        // anyway so on-path tampering with country/city data is blocked; users
+        // who depend on the free HTTP tier can switch providers via
+        // tracker.geoip.driver.
         try {
-            $response = Http::timeout(3)->get("http://ip-api.com/json/{$ip}", [
+            $response = Http::timeout(3)->get("https://ip-api.com/json/{$ip}", [
                 'fields' => 'status,country,countryCode,city,lat,lon',
             ]);
         } catch (Throwable) {

@@ -16,7 +16,7 @@ class GeoIpManager
 
     public function lookup(string $ip): GeoIpResult
     {
-        $hash = hash('sha256', $ip);
+        $hash = $this->hashIp($ip);
 
         $cached = $this->cache->find($hash);
         if ($cached !== null) {
@@ -47,6 +47,20 @@ class GeoIpManager
     public function setProviderOverride(GeoIpProviderInterface $provider): void
     {
         $this->override = $provider;
+    }
+
+    /**
+     * Keyed-hash so a stolen tracker_geoip_cache table can't be rainbow-tabled
+     * back to raw IPs. Falls back to plain SHA-256 only if APP_KEY is empty
+     * (which should not happen in any real app).
+     */
+    private function hashIp(string $ip): string
+    {
+        $secret = (string) config('app.key', '');
+
+        return $secret === ''
+            ? hash('sha256', $ip)
+            : hash_hmac('sha256', $ip, $secret);
     }
 
     private function provider(): GeoIpProviderInterface

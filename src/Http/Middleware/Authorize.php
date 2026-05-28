@@ -22,10 +22,19 @@ class Authorize
 
     private function isAuthorized(Request $request): bool
     {
-        if (Gate::has('viewTracker')) {
-            return Gate::allows('viewTracker', $request->user());
+        $gate = (string) config('tracker.dashboard.gate', 'viewTracker');
+
+        if ($gate !== '' && Gate::has($gate)) {
+            return Gate::allows($gate, $request->user());
         }
 
-        return in_array(app()->environment(), ['local', 'testing'], true);
+        // No gate registered. Allow only in environments the app has opted
+        // into via `dashboard.allow_without_gate_envs` (defaults to local +
+        // testing). Setting the list to [] forces every environment to
+        // register the gate, including local — production never falls open.
+        /** @var array<int, string> $allowedEnvs */
+        $allowedEnvs = (array) config('tracker.dashboard.allow_without_gate_envs', ['local', 'testing']);
+
+        return in_array(app()->environment(), $allowedEnvs, true);
     }
 }

@@ -11,6 +11,10 @@ final class IpInfoProvider implements GeoIpProviderInterface
 {
     public function lookup(string $ip): GeoIpResult
     {
+        if (! filter_var($ip, FILTER_VALIDATE_IP)) {
+            return GeoIpResult::empty();
+        }
+
         $token = (string) config('tracker.geoip.ipinfo.token', '');
         if ($token === '') {
             return GeoIpResult::empty();

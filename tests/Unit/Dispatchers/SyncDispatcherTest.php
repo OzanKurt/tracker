@@ -17,6 +17,7 @@ use OzanKurt\Tracker\Repositories\SessionRepository;
 use OzanKurt\Tracker\Support\BotFilter;
 use OzanKurt\Tracker\Support\Enricher;
 use OzanKurt\Tracker\Support\Pipeline;
+use OzanKurt\Tracker\Support\PrivacyFilter;
 use OzanKurt\Tracker\Support\RefererParser;
 
 beforeEach(fn () => $this->loadMigrationsFrom(__DIR__.'/../../../database/migrations'));
@@ -39,7 +40,7 @@ function makeSyncPipeline(): Pipeline
 
     return new Pipeline(
         botFilter: new BotFilter,
-        enricher: new Enricher($geo, new RefererParser),
+        enricher: new Enricher($geo, new RefererParser, new PrivacyFilter),
         repositories: new RepositoryManager(
             sessions: new SessionRepository,
             pageViews: new PageViewRepository,
