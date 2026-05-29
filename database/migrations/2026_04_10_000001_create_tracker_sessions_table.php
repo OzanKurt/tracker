@@ -12,8 +12,12 @@ return new class extends Migration
     {
         Schema::connection(config('tracker.connection'))->create('tracker_sessions', function (Blueprint $table) {
             $table->id();
-            $table->char('uuid', 36)->unique();
-            $table->char('visitor_uuid', 36)->index();
+            // VARCHAR instead of CHAR so Postgres doesn't right-pad the stored
+            // value to the fixed width (real UUIDs are always 36 chars, but
+            // tests and arbitrary callers can use shorter stand-ins, and the
+            // padding behaviour differs across drivers otherwise).
+            $table->string('uuid', 36)->unique();
+            $table->string('visitor_uuid', 36)->index();
             $table->unsignedBigInteger('user_id')->nullable()->index();
 
             $table->string('client_ip', 45)->index();
