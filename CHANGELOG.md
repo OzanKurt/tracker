@@ -62,6 +62,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - IP anonymization is now actually applied. Previously the flag had no
   effect — the raw IP was stored regardless.
+- `tracker_sessions.uuid` and `tracker_sessions.visitor_uuid` migrations
+  use `VARCHAR(36)` instead of `CHAR(36)` so Postgres doesn't right-pad
+  shorter values to the fixed width. Real UUIDs are always 36 chars,
+  so existing data is unaffected.
+- Bumped `ozankurt/agent` to `^1.0.5`. v1.0.5 fixes the `__call`
+  signature so consumers resolving the transitive
+  `mobiledetect/mobiledetectlib` to 4.11.0 (which added `: bool` to
+  the parent's `__call`) no longer hit a covariance fatal at class
+  load. The interim `mobiledetectlib` pin in tracker has been
+  removed.
+
+### Security (deps)
+- `composer update --with-all-dependencies` ran clean —
+  `composer audit` now reports no advisories. Cleared 11 advisories
+  affecting 7 packages, including:
+  - `symfony/http-foundation` CVE-2026-48736 (SSRF bypass via IPv6
+    transition forms) → 7.4.13
+  - `symfony/routing` CVE-2026-48784 (dot-segment URL normalization)
+    and CVE-2026-45065 (unanchored regex host injection) → 7.4.13
+  - `symfony/http-kernel` CVE-2026-45075 (HEAD bypasses
+    `methods: ['GET']` on `#[IsGranted]` / `#[IsSignatureValid]` /
+    `#[IsCsrfTokenValid]`) → 7.4.13
+  - `symfony/mime` CVE-2026-45067 (CRLF injection in `Address`),
+    CVE-2026-45070 (mime parameter header injection) → 7.4.13
+  - `symfony/mailer` CVE-2026-45068 (sendmail argument injection
+    via dash-prefixed address) → 7.4.12
+  - `symfony/polyfill-intl-idn` CVE-2026-46644 (xn-- ASCII-only
+    Punycode equivalence) → 1.38.1
+  - `symfony/yaml` advisory → 7.4.13
 
 ## [1.0.3] - 2026-04-11
 
